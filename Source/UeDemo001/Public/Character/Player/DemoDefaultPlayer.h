@@ -21,11 +21,6 @@ class UEDEMO001_API ADemoDefaultPlayer : public ADemoBaseCharacter
 	ADemoDefaultPlayer();
 
 protected:
-	/**
-	 * @brief 移动速率
-	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
-	float MovementRate;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	USpringArmComponent* CameraArm;
@@ -45,10 +40,22 @@ protected:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> MovementInputAction;
 
+	/**
+	 * @brief 转向动作
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	TObjectPtr<UInputAction> LookUpInputAction;
+
+	/**
+	 * @brief 奔跑动作
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	TObjectPtr<UInputAction> RunningInputAction;
+	
 	virtual void BeginPlay() override;
 
-	virtual void Move();
-	
+	virtual void Tick(float DeltaSeconds) override;
+
 private:
 	/**
 	 * @brief 开启增强输入
@@ -56,4 +63,10 @@ private:
 	void InitEnhancedInput();
 
 	virtual void MovementForEnhancedInput(const FInputActionValue& InputActionValue);
+
+	virtual void LookUpForEnhancedInput(const FInputActionValue& InputActionValue);
+
+	virtual void RunningForEnhancedInput(const FInputActionValue& InputActionValue);
+
+	void BindInputAction(TObjectPtr<UInputAction> InputAction,ETriggerEvent TriggerEvent,FName FunctionName);
 };

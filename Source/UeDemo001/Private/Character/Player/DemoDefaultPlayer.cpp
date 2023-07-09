@@ -3,8 +3,7 @@
 
 #include "Character/Player/DemoDefaultPlayer.h"
 #include "EnhancedInputComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/HitResult.h"
 
 ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
@@ -14,36 +13,24 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	CameraArm->TargetArmLength = 800.f;
 	CameraArm->SetRelativeRotation(FRotator(-35,0,0));
 	CameraArm->bDoCollisionTest = false;
+	CameraArm->bInheritPitch = false;
+	CameraArm->bInheritYaw = false;
+	CameraArm->bInheritRoll = false;
 
 	//创建摄像机组件
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
-
-	//调整骨骼网格体方向及位置
-	if (USkeletalMeshComponent* SkeletaMesh = GetComponentByClass<USkeletalMeshComponent>())
-	{
-		SkeletaMesh->SetRelativeRotation(FRotator(0,-90,0));
-		if (const UCapsuleComponent* Capsule = CastChecked<UCapsuleComponent>(GetRootComponent()))
-		{
-			SkeletaMesh->SetRelativeLocation(FVector(0,0,0 - Capsule->GetScaledCapsuleHalfHeight()));	
-		}
-	}
-
-	//默认移动倍率，
-	MovementRate = 5.f;
-	// GetCharacterMovement()->Velocity
 }
 
 void ADemoDefaultPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	InitEnhancedInput();
 }
 
-void ADemoDefaultPlayer::Move()
+void ADemoDefaultPlayer::Tick(float DeltaSeconds)
 {
-	
+	Super::Tick(DeltaSeconds);
 }
 
 void ADemoDefaultPlayer::InitEnhancedInput()
@@ -60,7 +47,19 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 		}
 		if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 		{
-			EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
+			if(MovementInputAction)
+			{
+				EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
+			}
+			if(LookUpInputAction)
+			{
+				EnhancedInputComponent->BindAction(LookUpInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::LookUpForEnhancedInput);
+			}
+			if(RunningInputAction)
+			{
+				EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
+				EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
+			}
 		}
 	}
 }
@@ -68,7 +67,18 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
+	AddMovementInput(FVector(1,0,0),MovementRate * MovementValue.X);
+	AddMovementInput(FVector(0,1,0),MovementRate * MovementValue.Y);
+	UE_LOG(LogTemp,Warning,TEXT("==========朝前移动：%f"),MovementValue.X);
+}
 
-	AddMovementInput(GetActorForwardVector() * MovementValue.X,MovementRate);
-	AddMovementInput(GetActorRightVector() * MovementValue.Y,MovementRate);
+void ADemoDefaultPlayer::LookUpForEnhancedInput(const FInputActionValue& InputActionValue)
+{
+	const FVector2d LookUpValue = InputActionValue.Get<FVector2d>();
+}
+
+void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
+{
+	bIsRunning = InputActionValue.Get<bool>();
+	MovementRate = bIsRunning ? 1.0f : 0.5f;
 }

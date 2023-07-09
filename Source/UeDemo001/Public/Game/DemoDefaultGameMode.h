@@ -15,4 +15,5 @@ class UEDEMO001_API ADemoDefaultGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 	ADemoDefaultGameMode();
+
 };

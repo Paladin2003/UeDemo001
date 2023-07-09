@@ -3,3 +3,13 @@
 
 #include "Game/DemoDefaultPlayerController.h"
 
+ADemoDefaultPlayerController::ADemoDefaultPlayerController()
+{
+}
+
+void ADemoDefaultPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+

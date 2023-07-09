@@ -9,7 +9,5 @@
 ADemoDefaultGameMode::ADemoDefaultGameMode()
 {
 	DefaultPawnClass = ADemoDefaultPlayer::StaticClass();
-
 	PlayerControllerClass = ADemoDefaultPlayerController::StaticClass();
-	
 }

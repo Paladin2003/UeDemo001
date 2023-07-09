@@ -13,5 +13,9 @@ UCLASS()
 class UEDEMO001_API ADemoDefaultPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+	ADemoDefaultPlayerController();
+
+protected:
+	virtual void BeginPlay() override;
 };
