@@ -2,7 +2,11 @@
 
 
 #include "Animation/DemoBaseAnimInstance.h"
-#include "GameFramework/Character.h"
+#include "Character/DemoBaseCharacter.h"
+
+UDemoBaseAnimInstance::UDemoBaseAnimInstance()
+{
+}
 
 void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -10,9 +14,13 @@ void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
-		if (const ACharacter* Character = PlayerController->GetCharacter())
+		if (ACharacter* Character = PlayerController->GetCharacter())
 		{
-			Velocity = Character->GetVelocity().Length();
+			if (ADemoBaseCharacter* DemoCharacter = CastChecked<ADemoBaseCharacter>(Character))
+			{
+				Velocity = DemoCharacter->GetVelocity().Length();
+				bAttacking = DemoCharacter->bAttacking;
+			}
 		}
 	}
 }

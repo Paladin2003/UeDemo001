@@ -11,5 +11,4 @@ UDemoCharacterAnimInstance::UDemoCharacterAnimInstance()
 void UDemoCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-	
 }

@@ -20,6 +20,10 @@ class UEDEMO001_API ADemoDefaultPlayer : public ADemoBaseCharacter
 
 	ADemoDefaultPlayer();
 
+public:
+
+	virtual void AttackFireBall() override;
+	
 protected:
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
@@ -35,27 +39,40 @@ protected:
 	TObjectPtr<UInputMappingContext> MovementInputMappingContext;
 
 	/**
-	 * @brief 移动动作
+	 * @brief 移动输入
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> MovementInputAction;
 
 	/**
-	 * @brief 转向动作
+	 * @brief 转向输入
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> LookUpInputAction;
 
 	/**
-	 * @brief 奔跑动作
+	 * @brief 奔跑输入
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> RunningInputAction;
+
+	/**
+	 * @brief 攻击输入
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	TObjectPtr<UInputAction> AttackInputAction;
+
+	/**
+	 * @brief 普通攻击动画蒙太奇
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Anim")
+	class UAnimMontage* AttackAnimMontage;
 	
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
-
+	
+	
 private:
 	/**
 	 * @brief 开启增强输入
@@ -64,9 +81,7 @@ private:
 
 	virtual void MovementForEnhancedInput(const FInputActionValue& InputActionValue);
 
-	virtual void LookUpForEnhancedInput(const FInputActionValue& InputActionValue);
-
 	virtual void RunningForEnhancedInput(const FInputActionValue& InputActionValue);
 
-	void BindInputAction(TObjectPtr<UInputAction> InputAction,ETriggerEvent TriggerEvent,FName FunctionName);
+	virtual void AttackForEnhancedInput(const FInputActionValue& InputActionValue);
 };

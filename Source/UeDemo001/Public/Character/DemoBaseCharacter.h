@@ -15,19 +15,28 @@ protected:
 	ADemoBaseCharacter();
 
 public:
-	
-protected:
 	/**
 	 * @brief 是否奔跑
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
 	bool bIsRunning;
+
 	/**
 	 * @brief 移动速率
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
 	float MovementRate;
-
+	
+	/**
+	 * @brief 是否正在攻击
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Attack")
+	bool bAttacking;
+	
+protected:
+	/**
+	 * @brief 武器
+	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UStaticMeshComponent* Weapon;
 
@@ -40,6 +49,11 @@ protected:
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackEndNotify();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackFireBall();
 protected:
 
 	/**

@@ -14,12 +14,16 @@ UCLASS()
 class UEDEMO001_API UDemoBaseAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-
+	
+public:
+	UDemoBaseAnimInstance();
 protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Movement")
 	float Velocity;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attack")
+	bool bAttacking;
+
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
 };

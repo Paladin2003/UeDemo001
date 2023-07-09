@@ -5,7 +5,6 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ADemoBaseCharacter::ADemoBaseCharacter()
@@ -52,8 +51,19 @@ void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ADemoBaseCharacter::AttackEndNotify()
+{
+	UE_LOG(LogTemp,Warning,TEXT("==普通攻击完成----"));
+	bAttacking = false;
+}
+
+void ADemoBaseCharacter::AttackFireBall()
+{
+	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"))
+}
+
 void ADemoBaseCharacter::CharacterRotate(FVector Vector)
 {
-	SetActorRotation(UKismetMathLibrary::MakeRotFromX(Vector));
+	
 }
 

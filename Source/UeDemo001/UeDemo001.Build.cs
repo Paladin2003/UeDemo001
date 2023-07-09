@@ -8,7 +8,10 @@ public class UeDemo001 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","EnhancedInput","Kismet"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine",
+			"InputCore",
+			"EnhancedInput"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

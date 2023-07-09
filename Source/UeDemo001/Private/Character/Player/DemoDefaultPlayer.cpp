@@ -7,6 +7,9 @@
 
 ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
+
+	bAttacking = false;
+	
 	//创建弹簧臂组件
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraArm->AttachToComponent(GetRootComponent(),FAttachmentTransformRules::KeepRelativeTransform);
@@ -20,7 +23,11 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	//创建摄像机组件
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
-	
+}
+
+void ADemoDefaultPlayer::AttackFireBall()
+{
+	Super::AttackFireBall();
 }
 
 void ADemoDefaultPlayer::BeginPlay()
@@ -36,11 +43,7 @@ void ADemoDefaultPlayer::Tick(float DeltaSeconds)
 
 void ADemoDefaultPlayer::InitEnhancedInput()
 {
-	if(nullptr == MovementInputMappingContext)
-	{
-		return;
-	}
-	if (APlayerController* PlayerController = CastChecked<APlayerController>(GetController()))
+	if (const APlayerController* PlayerController = CastChecked<APlayerController>(GetController()))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
@@ -48,19 +51,11 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 		}
 		if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 		{
-			if(MovementInputAction)
-			{
-				EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
-			}
-			if(LookUpInputAction)
-			{
-				EnhancedInputComponent->BindAction(LookUpInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::LookUpForEnhancedInput);
-			}
-			if(RunningInputAction)
-			{
-				EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
-				EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
-			}
+			EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
+			EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
+			EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
+
+			EnhancedInputComponent->BindAction(AttackInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::AttackForEnhancedInput);
 		}
 	}
 }
@@ -72,13 +67,17 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 	AddMovementInput(FVector(0,1,0),MovementRate * MovementValue.Y);
 }
 
-void ADemoDefaultPlayer::LookUpForEnhancedInput(const FInputActionValue& InputActionValue)
-{
-	const FVector2d LookUpValue = InputActionValue.Get<FVector2d>();
-}
-
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
 	MovementRate = bIsRunning ? 1.0f : 0.5f;
+}
+
+void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)
+{
+	if(!bAttacking)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("===发送普通攻击"));
+		bAttacking = true;
+	}
 }
