@@ -20,6 +20,7 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	//创建摄像机组件
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
+	
 }
 
 void ADemoDefaultPlayer::BeginPlay()
@@ -69,7 +70,6 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
 	AddMovementInput(FVector(1,0,0),MovementRate * MovementValue.X);
 	AddMovementInput(FVector(0,1,0),MovementRate * MovementValue.Y);
-	UE_LOG(LogTemp,Warning,TEXT("==========朝前移动：%f"),MovementValue.X);
 }
 
 void ADemoDefaultPlayer::LookUpForEnhancedInput(const FInputActionValue& InputActionValue)

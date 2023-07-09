@@ -22,8 +22,14 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 	GetMesh()->SetRelativeRotation(DefaultRotateForSkm);
 	GetMesh()->SetRelativeLocation(FVector(0,0,0 - GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 
+	//设置固定视角
 	bUseControllerRotationYaw = false;
+	//设置面向运动
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
+	//创建武器节点
+	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
+	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,"Weapon");
 }
 
 // Called when the game starts or when spawned

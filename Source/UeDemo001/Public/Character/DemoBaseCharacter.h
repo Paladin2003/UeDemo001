@@ -11,10 +11,11 @@ class UEDEMO001_API ADemoBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
+protected:
 	ADemoBaseCharacter();
 
+public:
+	
 protected:
 	/**
 	 * @brief 是否奔跑
@@ -26,23 +27,28 @@ protected:
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
 	float MovementRate;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UStaticMeshComponent* Weapon;
+
+	/**
+	 * @brief 骨骼网格体的初始旋转 
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	FRotator DefaultRotateForSkm = FRotator(0,-90,0);
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 
 protected:
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
-	//骨骼网格体的初始旋转
-	FRotator DefaultRotateForSkm = FRotator(0,-90,0);
-
+	/**
+	 * @brief 角色旋转
+	 * @param Vector 移动向量
+	 */
 	void CharacterRotate(FVector Vector);
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 };
