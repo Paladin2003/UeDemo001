@@ -3,7 +3,13 @@
 
 #include "Character/Enemy/DemoDefaultEnemy.h"
 
+#include "AI/Controller/DemoEnemyAIController.h"
+
 ADemoDefaultEnemy::ADemoDefaultEnemy()
 {
 	MovementRate = 0.2f;
+
+	AIControllerClass = ADemoEnemyAIController::StaticClass();
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
