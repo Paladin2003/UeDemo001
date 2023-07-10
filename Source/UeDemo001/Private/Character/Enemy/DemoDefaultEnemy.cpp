@@ -7,9 +7,13 @@
 
 ADemoDefaultEnemy::ADemoDefaultEnemy()
 {
-	MovementRate = 0.2f;
-
 	AIControllerClass = ADemoEnemyAIController::StaticClass();
-
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+void ADemoDefaultEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetCharactorMaxWalkSpeed(300.f);
 }

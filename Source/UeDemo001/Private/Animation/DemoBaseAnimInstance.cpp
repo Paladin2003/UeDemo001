@@ -16,10 +16,6 @@ void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ADemoBaseCharacter* OwnerCharacter  = Cast<ADemoBaseCharacter>(TryGetPawnOwner()))
 	{
 		bAttacking = OwnerCharacter->bAttacking;
-
-		if(nullptr != Cast<ADemoDefaultPlayer>(OwnerCharacter))
-		{
-			Velocity = OwnerCharacter->GetVelocity().Length();
-		}
+		Velocity = OwnerCharacter->GetVelocity().Length();
 	} 
 }

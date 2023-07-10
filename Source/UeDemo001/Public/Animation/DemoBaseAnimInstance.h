@@ -16,11 +16,13 @@ class UEDEMO001_API UDemoBaseAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 	
 public:
-	UDemoBaseAnimInstance();
-protected:
 
+	UDemoBaseAnimInstance();
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Movement")
 	float Velocity;
+	
+protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attack")
 	bool bAttacking;

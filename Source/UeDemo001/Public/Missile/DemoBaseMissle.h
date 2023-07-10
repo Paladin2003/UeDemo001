@@ -30,10 +30,14 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UParticleSystemComponent* Partical;
-	
+
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float DesdroyDelayTime;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

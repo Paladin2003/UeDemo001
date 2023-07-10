@@ -15,8 +15,6 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 
 	//默认移动倍率，
 	bIsRunning = false;
-	MovementRate = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 1000.f;
 
 	//调整骨骼网格体方向及位置
 	GetMesh()->SetRelativeRotation(DefaultRotateForSkm);
@@ -30,13 +28,14 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 	//创建武器节点
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,"Weapon");
+	
 }
 
 // Called when the game starts or when spawned
 void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetCharactorMaxWalkSpeed(500.f);
 }
 
 // Called every frame
@@ -51,6 +50,11 @@ void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ADemoBaseCharacter::SetCharactorMaxWalkSpeed(float MaxWalkSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
 void ADemoBaseCharacter::AttackEndNotify()
 {
 	bAttacking = false;
@@ -59,16 +63,11 @@ void ADemoBaseCharacter::AttackEndNotify()
 void ADemoBaseCharacter::AttackFireBall()
 {
 	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
-	// const FTransform ActorTransform = ;
-	GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
+	ADemoBaseMissle* DemoBaseMissle = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
+	DemoBaseMissle->SetLifeSpan(DemoBaseMissle -> DesdroyDelayTime);
 }
 
 void ADemoBaseCharacter::CommAttack()
-{
-	
-}
-
-void ADemoBaseCharacter::CharacterRotate(FVector Vector)
 {
 	
 }

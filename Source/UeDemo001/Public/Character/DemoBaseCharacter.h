@@ -23,18 +23,25 @@ public:
 	bool bIsRunning;
 
 	/**
-	 * @brief 移动速率
-	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
-	float MovementRate;
-	
-	/**
 	 * @brief 是否正在攻击
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Attack")
 	bool bAttacking;
-	
+
+	/**
+	 * @brief 攻击后的通知
+	 */
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackEndNotify();
+
+	/**
+	 * @brief 攻击时产生发射物的通知
+	 */
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackFireBall();
+
 protected:
+	
 	/**
 	 * @brief 武器
 	 */
@@ -55,30 +62,14 @@ protected:
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	/**
-	 * @brief 攻击后的通知
-	 */
-	UFUNCTION(BlueprintCallable)
-	virtual void AttackEndNotify();
 
-	/**
-	 * @brief 攻击时产生发射物的通知
-	 */
-	UFUNCTION(BlueprintCallable)
-	virtual void AttackFireBall();
+	virtual void SetCharactorMaxWalkSpeed(float MaxWalkSpeed);
 protected:
 	/**
 	 * @brief 发起普通攻击
 	 */
 	virtual void CommAttack();
 	
-	/**
-	 * @brief 角色旋转
-	 * @param Vector 移动向量
-	 */
-	void CharacterRotate(FVector Vector);
-
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;

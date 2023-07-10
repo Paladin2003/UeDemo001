@@ -9,7 +9,6 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
 
 	bAttacking = false;
-	MovementRate = 0.4f;
 	
 	//创建弹簧臂组件
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
@@ -64,6 +63,7 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 		if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 		{
 			EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
+			EnhancedInputComponent->BindAction(MovementInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MovementForEnhancedInput);
 			EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
 			EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
 
@@ -75,14 +75,14 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
-	AddMovementInput(FVector(1,0,0),MovementRate * MovementValue.X);
-	AddMovementInput(FVector(0,1,0),MovementRate * MovementValue.Y);
+	AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
+	AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
 }
 
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	MovementRate = bIsRunning ? 0.8f : 0.4f;
+	SetCharactorMaxWalkSpeed(bIsRunning ? 800.f : 500.f);
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)

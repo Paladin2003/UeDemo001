@@ -9,6 +9,9 @@ ADemoBaseMissle::ADemoBaseMissle()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//延迟销毁的时间
+	DesdroyDelayTime = 3;
+
 	//创建根节点
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	SetRootComponent(Sphere);
@@ -34,7 +37,6 @@ ADemoBaseMissle::ADemoBaseMissle()
 void ADemoBaseMissle::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
