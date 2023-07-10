@@ -75,9 +75,10 @@ void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputA
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)
 {
-	if(!bAttacking)
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(!bAttacking && AttackAnimMontage && AnimInstance && !AnimInstance->Montage_IsPlaying(AttackAnimMontage))
 	{
-		UE_LOG(LogTemp,Warning,TEXT("===发送普通攻击"));
 		bAttacking = true;
+		AnimInstance->Montage_Play(AttackAnimMontage);
 	}
 }

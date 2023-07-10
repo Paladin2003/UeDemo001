@@ -42,7 +42,6 @@ void ADemoBaseCharacter::BeginPlay()
 void ADemoBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -53,13 +52,13 @@ void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ADemoBaseCharacter::AttackEndNotify()
 {
-	UE_LOG(LogTemp,Warning,TEXT("==普通攻击完成----"));
 	bAttacking = false;
 }
 
 void ADemoBaseCharacter::AttackFireBall()
 {
-	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"))
+	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
+	
 }
 
 void ADemoBaseCharacter::CharacterRotate(FVector Vector)
