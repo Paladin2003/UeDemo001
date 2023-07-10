@@ -3,3 +3,7 @@
 
 #include "Character/Enemy/DemoDefaultEnemy.h"
 
+ADemoDefaultEnemy::ADemoDefaultEnemy()
+{
+	MovementRate = 0.2f;
+}

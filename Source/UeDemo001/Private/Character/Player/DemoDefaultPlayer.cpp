@@ -9,12 +9,13 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
 
 	bAttacking = false;
+	MovementRate = 0.4f;
 	
 	//创建弹簧臂组件
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraArm->AttachToComponent(GetRootComponent(),FAttachmentTransformRules::KeepRelativeTransform);
-	CameraArm->TargetArmLength = 800.f;
-	CameraArm->SetRelativeRotation(FRotator(-35,0,0));
+	CameraArm->TargetArmLength = 1000.f;
+	CameraArm->SetRelativeRotation(FRotator(-30,0,0));
 	CameraArm->bDoCollisionTest = false;
 	CameraArm->bInheritPitch = false;
 	CameraArm->bInheritYaw = false;
@@ -81,7 +82,7 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	MovementRate = bIsRunning ? 0.5f : 0.35f;
+	MovementRate = bIsRunning ? 0.8f : 0.4f;
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)

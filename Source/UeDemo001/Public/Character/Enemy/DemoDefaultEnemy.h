@@ -13,5 +13,7 @@ UCLASS()
 class UEDEMO001_API ADemoDefaultEnemy : public ADemoBaseCharacter
 {
 	GENERATED_BODY()
+
+	ADemoDefaultEnemy();
 	
 };

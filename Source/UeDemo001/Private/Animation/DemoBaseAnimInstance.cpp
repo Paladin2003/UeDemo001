@@ -3,6 +3,7 @@
 
 #include "Animation/DemoBaseAnimInstance.h"
 #include "Character/DemoBaseCharacter.h"
+#include "Character/Player/DemoDefaultPlayer.h"
 
 UDemoBaseAnimInstance::UDemoBaseAnimInstance()
 {
@@ -12,15 +13,13 @@ void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	if (ADemoBaseCharacter* OwnerCharacter  = Cast<ADemoBaseCharacter>(TryGetPawnOwner()))
 	{
-		if (ACharacter* Character = PlayerController->GetCharacter())
+		bAttacking = OwnerCharacter->bAttacking;
+
+		if(nullptr != Cast<ADemoDefaultPlayer>(OwnerCharacter))
 		{
-			if (ADemoBaseCharacter* DemoCharacter = CastChecked<ADemoBaseCharacter>(Character))
-			{
-				Velocity = DemoCharacter->GetVelocity().Length();
-				bAttacking = DemoCharacter->bAttacking;
-			}
+			Velocity = OwnerCharacter->GetVelocity().Length();
 		}
-	}
+	} 
 }
