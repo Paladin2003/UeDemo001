@@ -41,6 +41,17 @@ void ADemoDefaultPlayer::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
+void ADemoDefaultPlayer::CommAttack()
+{
+	Super::CommAttack();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(!bAttacking && AttackAnimMontage && AnimInstance && !AnimInstance->Montage_IsPlaying(AttackAnimMontage))
+	{
+		bAttacking = true;
+		AnimInstance->Montage_Play(AttackAnimMontage,1.25f);
+	}
+}
+
 void ADemoDefaultPlayer::InitEnhancedInput()
 {
 	if (const APlayerController* PlayerController = CastChecked<APlayerController>(GetController()))
@@ -70,15 +81,10 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	MovementRate = bIsRunning ? 1.0f : 0.5f;
+	MovementRate = bIsRunning ? 0.5f : 0.35f;
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if(!bAttacking && AttackAnimMontage && AnimInstance && !AnimInstance->Montage_IsPlaying(AttackAnimMontage))
-	{
-		bAttacking = true;
-		AnimInstance->Montage_Play(AttackAnimMontage);
-	}
+	CommAttack();
 }

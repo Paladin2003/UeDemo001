@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "DemoBaseMissle.generated.h"
 
 UCLASS()
@@ -23,6 +24,12 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UProjectileMovementComponent* Movement;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UParticleSystemComponent* Partical;
 	
 	virtual void BeginPlay() override;
 

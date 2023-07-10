@@ -2,6 +2,7 @@
 
 
 #include "Missile/DemoBaseMissle.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 ADemoBaseMissle::ADemoBaseMissle()
@@ -16,6 +17,17 @@ ADemoBaseMissle::ADemoBaseMissle()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->AttachToComponent(Sphere,FAttachmentTransformRules::KeepRelativeTransform);
 
+	//添加发射移动组件
+	Movement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Movenent"));
+	Movement->MaxSpeed = 3000.f;
+	Movement->InitialSpeed = 2000.f;
+	Movement->bRotationFollowsVelocity = true;
+	Movement->bRotationRemainsVertical = true;
+	Movement->ProjectileGravityScale = 0;
+
+	//特效组件
+	Partical = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Partical"));
+	Partical->AttachToComponent(Sphere,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned

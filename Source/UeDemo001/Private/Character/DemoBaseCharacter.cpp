@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Missile/DemoBaseMissle.h"
 
 // Sets default values
 ADemoBaseCharacter::ADemoBaseCharacter()
@@ -14,7 +15,7 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 
 	//默认移动倍率，
 	bIsRunning = false;
-	MovementRate = 0.5f;
+	MovementRate = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 1000.f;
 
 	//调整骨骼网格体方向及位置
@@ -58,6 +59,12 @@ void ADemoBaseCharacter::AttackEndNotify()
 void ADemoBaseCharacter::AttackFireBall()
 {
 	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
+	// const FTransform ActorTransform = ;
+	GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
+}
+
+void ADemoBaseCharacter::CommAttack()
+{
 	
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Missile/DemoBaseMissle.h"
 #include "DemoBaseCharacter.generated.h"
 
 UCLASS()
@@ -46,16 +47,32 @@ protected:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
 	FRotator DefaultRotateForSkm = FRotator(0,-90,0);
 
+	/**
+	 * @brief 发射物类型
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	TSubclassOf<class ADemoBaseMissle> MissileClass;
+
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
+	/**
+	 * @brief 攻击后的通知
+	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEndNotify();
 
+	/**
+	 * @brief 攻击时产生发射物的通知
+	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackFireBall();
 protected:
-
+	/**
+	 * @brief 发起普通攻击
+	 */
+	virtual void CommAttack();
+	
 	/**
 	 * @brief 角色旋转
 	 * @param Vector 移动向量
