@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Missile/DemoBaseMissle.h"
 #include "GameFramework/Actor.h"
+#include "Widget/DamageTipWidget.h"
 #include "DemoBaseCharacter.generated.h"
 
 UCLASS()
@@ -44,7 +45,12 @@ public:
 protected:
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
-	int32 Hp = 10;
+	int32 CurHp = 10;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	int32 MaxHp = 10;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	TSubclassOf<UDamageTipWidget> DamageTipWidget;
 	
 	/**
 	 * @brief 武器

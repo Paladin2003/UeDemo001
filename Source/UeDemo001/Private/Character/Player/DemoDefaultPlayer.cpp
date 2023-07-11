@@ -13,8 +13,8 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	//创建弹簧臂组件
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraArm->AttachToComponent(GetRootComponent(),FAttachmentTransformRules::KeepRelativeTransform);
-	CameraArm->TargetArmLength = 1000.f;
-	CameraArm->SetRelativeRotation(FRotator(-30,0,0));
+	CameraArm->TargetArmLength = 2000.f;
+	CameraArm->SetRelativeRotation(FRotator(-45,0,0));
 	CameraArm->bDoCollisionTest = false;
 	CameraArm->bInheritPitch = false;
 	CameraArm->bInheritYaw = false;

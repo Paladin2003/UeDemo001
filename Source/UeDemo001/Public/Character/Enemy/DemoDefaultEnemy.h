@@ -18,9 +18,11 @@ class UEDEMO001_API ADemoDefaultEnemy : public ADemoBaseCharacter
 	ADemoDefaultEnemy();
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-	
+
 protected:
 	virtual void BeginPlay() override;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 };

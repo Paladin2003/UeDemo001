@@ -10,7 +10,8 @@ public class UeDemo001 : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine",
 			"InputCore",
-			"EnhancedInput"
+			"EnhancedInput",
+			"UMG","Slate","SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
