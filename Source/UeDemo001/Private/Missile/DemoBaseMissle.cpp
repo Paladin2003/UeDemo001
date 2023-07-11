@@ -2,6 +2,8 @@
 
 
 #include "Missile/DemoBaseMissle.h"
+#include "Character/Enemy/DemoDefaultEnemy.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
@@ -15,6 +17,9 @@ ADemoBaseMissle::ADemoBaseMissle()
 	//创建根节点
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	SetRootComponent(Sphere);
+
+	Sphere->OnComponentBeginOverlap.RemoveDynamic(this, &ADemoBaseMissle::BeginOverlap);
+	Sphere->OnComponentBeginOverlap.AddDynamic(this,&ADemoBaseMissle::BeginOverlap);
 
 	//网格体组件
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -37,6 +42,25 @@ ADemoBaseMissle::ADemoBaseMissle()
 void ADemoBaseMissle::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp,Warning,TEXT("触发重叠事件。。。。"));
+	
+	if (ADemoDefaultEnemy* DemoDefaultEnemy = Cast<ADemoDefaultEnemy>(Other))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("击中目标：%s"),*FName(DemoDefaultEnemy->GetName()).ToString());
+
+		UGameplayStatics::ApplyDamage(DemoDefaultEnemy,Damage,DemoDefaultEnemy->GetController(),this,nullptr);
+	}
+
+	
+}
+
+void ADemoBaseMissle::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	
 }
 
 // Called every frame

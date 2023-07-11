@@ -15,7 +15,7 @@ class UEDEMO001_API ADemoEnemyAIController : public AAIController
 	GENERATED_BODY()
 
 	ADemoEnemyAIController();
-
+	
 protected:
 	virtual void BeginPlay() override;
 

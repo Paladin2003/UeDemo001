@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Missile/DemoBaseMissle.h"
+#include "GameFramework/Actor.h"
 #include "DemoBaseCharacter.generated.h"
 
 UCLASS()
@@ -41,6 +42,9 @@ public:
 	virtual void AttackFireBall();
 
 protected:
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	int32 Hp = 10;
 	
 	/**
 	 * @brief 武器
@@ -73,4 +77,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	
 };
