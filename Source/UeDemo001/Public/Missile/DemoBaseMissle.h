@@ -19,6 +19,9 @@ public:
 
 protected:
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Damage")
+	int32 Damage = 3;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USphereComponent* Sphere;
 
@@ -33,6 +36,11 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void EndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex);
+
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -41,4 +49,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	
 };

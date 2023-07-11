@@ -20,7 +20,6 @@ void ADemoEnemyAIController::BeginPlay()
 		RunBehaviorTree(BehaviorTree);
 		UE_LOG(LogTemp,Warning,TEXT("运行行为树：%s"),*FName(BehaviorTree->GetName()).ToString());
 	}
-	 
 }
 
 void ADemoEnemyAIController::Tick(float DeltaSeconds)
