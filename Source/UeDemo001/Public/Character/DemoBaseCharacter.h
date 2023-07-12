@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
 	bool bIsRunning;
 
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
+	bool bIsDie;
+
 	/**
 	 * @brief 是否正在攻击
 	 */

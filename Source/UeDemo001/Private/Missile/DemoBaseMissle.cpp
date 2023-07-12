@@ -12,7 +12,7 @@ ADemoBaseMissle::ADemoBaseMissle()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//延迟销毁的时间
-	DesdroyDelayTime = 3;
+	DestroyDelayTime = 3;
 
 	//创建根节点
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
@@ -55,11 +55,6 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		UGameplayStatics::ApplyDamage(DemoDefaultEnemy,Damage,DemoDefaultEnemy->GetController(),this,nullptr);
 	}
 
-	
-}
-
-void ADemoBaseMissle::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
 	
 }
 

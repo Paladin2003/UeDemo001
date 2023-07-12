@@ -27,11 +27,19 @@ float ADemoDefaultEnemy::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	this->CurHp -= Damage;
 	UE_LOG(LogTemp,Warning,TEXT("敌方【%s】受到%f点伤害,当前血量：%d/%d"),*FName(this->GetName()).ToString(),Damage,CurHp,MaxHp);
-	UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
-	TipWidget->DamageValue = Damage;
-	TipWidget->AddToViewport(0);
-	FVector2D ScreenPosition ;
-	UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
-	TipWidget->SetPositionInViewport(ScreenPosition);
+	if(CurHp <= 0)
+	{
+		// this->PlayAnimMontage()
+		this->bIsDie = true;
+		this->bIsRunning = false;
+	}else
+	{
+		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
+		TipWidget->DamageValue = Damage;
+		TipWidget->AddToViewport(0);
+		FVector2D ScreenPosition ;
+		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
+		TipWidget->SetPositionInViewport(ScreenPosition);	
+	}
 	return Damage;
 }

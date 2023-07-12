@@ -24,6 +24,9 @@ public:
 	
 protected:
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Movement")
+	bool bDie;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Attack")
 	bool bAttacking;
 

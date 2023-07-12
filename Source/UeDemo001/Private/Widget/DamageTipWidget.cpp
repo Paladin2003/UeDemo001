@@ -7,15 +7,22 @@ void UDamageTipWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayAnimation(DamageTipAnim);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&UDamageTipWidget::AutoDestroyed,HealthTime,false);
 }
 
 void UDamageTipWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	DamageTip->TextDelegate.BindUFunction(this,"GetDamageValue");
+	DamageTip->TextDelegate.BindUFunction(this, "GetDamageValue");
 }
 
 FText UDamageTipWidget::GetDamageValue()
 {
 	return FText::AsNumber(DamageValue);
+}
+
+void UDamageTipWidget::AutoDestroyed()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	RemoveFromParent();
 }

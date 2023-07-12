@@ -16,6 +16,7 @@ void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (ADemoBaseCharacter* OwnerCharacter  = Cast<ADemoBaseCharacter>(TryGetPawnOwner()))
 	{
 		bAttacking = OwnerCharacter->bAttacking;
+		bDie = OwnerCharacter->bIsDie;
 		Velocity = OwnerCharacter->GetVelocity().Length();
 	} 
 }

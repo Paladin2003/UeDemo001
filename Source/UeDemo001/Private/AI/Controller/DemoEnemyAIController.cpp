@@ -16,9 +16,12 @@ void ADemoEnemyAIController::BeginPlay()
 	if (nullptr != Cast<ADemoDefaultEnemy>(GetCharacter()))
 	{
 		ADemoDefaultEnemy* DemoDefaultEnemy = Cast<ADemoDefaultEnemy>(GetCharacter());
-		UBehaviorTree* BehaviorTree = DemoDefaultEnemy->BehaviorTree;
-		RunBehaviorTree(BehaviorTree);
-		UE_LOG(LogTemp,Warning,TEXT("运行行为树：%s"),*FName(BehaviorTree->GetName()).ToString());
+		if (!DemoDefaultEnemy->bIsDie)
+		{
+			UBehaviorTree* BehaviorTree = DemoDefaultEnemy->BehaviorTree;
+			RunBehaviorTree(BehaviorTree);
+			UE_LOG(LogTemp,Warning,TEXT("运行行为树：%s"),*FName(BehaviorTree->GetName()).ToString());	
+		}
 	}
 }
 

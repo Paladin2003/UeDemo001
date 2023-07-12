@@ -15,6 +15,7 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 
 	//默认移动倍率，
 	bIsRunning = false;
+	bIsDie = false;
 
 	//调整骨骼网格体方向及位置
 	GetMesh()->SetRelativeRotation(DefaultRotateForSkm);
@@ -64,7 +65,7 @@ void ADemoBaseCharacter::AttackFireBall()
 {
 	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
 	ADemoBaseMissle* DemoBaseMissle = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
-	DemoBaseMissle->SetLifeSpan(DemoBaseMissle -> DesdroyDelayTime);
+	DemoBaseMissle->SetLifeSpan(DemoBaseMissle -> DestroyDelayTime);
 }
 
 void ADemoBaseCharacter::CommAttack()

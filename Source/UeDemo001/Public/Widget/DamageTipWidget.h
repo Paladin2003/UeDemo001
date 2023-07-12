@@ -17,6 +17,7 @@ class UEDEMO001_API UDamageTipWidget : public UUserWidget
 
 public:
 
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(ExposeOnSpawn = 1))
 	int32 DamageValue = 0;
 
@@ -25,6 +26,11 @@ public:
 	
 protected:
 
+	FTimerHandle TimerHandle;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float HealthTime = 1.0f;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(BindWidgetOptional))
 	UTextBlock* DamageTip;
 
@@ -38,4 +44,10 @@ protected:
 	 */
 	UFUNCTION()
 	FText GetDamageValue();
+
+	/**
+	 * @brief 自动销毁回调
+	 */
+	UFUNCTION()
+	void AutoDestroyed();
 };
