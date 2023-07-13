@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UParticleSystemComponent* Partical;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UParticleSystem* BoomParticle;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()

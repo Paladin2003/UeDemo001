@@ -52,7 +52,12 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		bOverlapped = true;
 		if (ADemoBaseCharacter* DemoBaseCharacter = Cast<ADemoBaseCharacter>(Other))
 		{
+			//生成伤害
 			UGameplayStatics::ApplyDamage(DemoBaseCharacter,Damage,DemoBaseCharacter->GetController(),this,nullptr);
+
+			//创建爆炸特效
+			UGameplayStatics::SpawnEmitterAtLocation(this,BoomParticle,this->GetActorLocation());
+
 			this->Destroy();
 		}
 	}
