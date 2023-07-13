@@ -61,6 +61,8 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		this->bIsDie = true;
 		this->bIsRunning = false;
+		GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&ADemoBaseCharacter::DelayDestroyed,2.5f,false);
 	}else
 	{
 		bIsHit = true;
@@ -114,5 +116,11 @@ void ADemoBaseCharacter::CommAttack()
 		SetActorRotation(FRotator(0,Rotator.Yaw,0));
 		PlayAnimMontage(AttackAnimMontage,1.25f);
 	}
+}
+
+void ADemoBaseCharacter::DelayDestroyed()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	this->Destroy();
 }
 

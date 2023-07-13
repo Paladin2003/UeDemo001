@@ -22,19 +22,19 @@ public:
 	/**
 	 * @brief 是否奔跑
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Movement")
 	bool bIsRunning;
 
 	/**
 	 * @brief 是否死亡
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Movement")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Movement")
 	bool bIsDie;
 
 	/**
 	 * @brief 是否正在攻击
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Attack")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Attack")
 	bool bAttacking;
 
 	/**
@@ -42,7 +42,7 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="move")
 	bool bIsHit;
-	
+
 	/**
 	 * @brief 攻击后的通知
 	 */
@@ -61,70 +61,76 @@ public:
 	virtual void AttackFireBall();
 
 protected:
-
 	bool bLockRotate;
 	/**
 	 * @brief 当前血量
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
 	int32 CurHp = 10;
 	/**
 	 * @brief 最大血量
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
 	int32 MaxHp = 10;
 
 	/**
 	 * @brief 伤害显示UI
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
 	TSubclassOf<UDamageTipWidget> DamageTipWidget;
-	
+
 	/**
 	 * @brief 武器
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStaticMeshComponent* Weapon;
 
 	/**
 	 * @brief 骨骼网格体的初始旋转 
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
-	FRotator DefaultRotateForSkm = FRotator(0,-90,0);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
+	FRotator DefaultRotateForSkm = FRotator(0, -90, 0);
 
 	/**
 	 * @brief 发射物类型
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
 	TSubclassOf<class ADemoBaseMissle> MissileClass;
 
 	/**
 	 * @brief 被攻击动画蒙太奇
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Anim")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Anim")
 	class UAnimMontage* HitAnimMontage;
 
 	/**
 	 * @brief 普通攻击动画蒙太奇
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Anim")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Anim")
 	class UAnimMontage* AttackAnimMontage;
 
-public:	
+public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void SetCharactorMaxWalkSpeed(float MaxWalkSpeed);
-	
+
 protected:
+	FTimerHandle TimerHandle;
+
+	/**
+	 * @brief 延时销毁
+	 */
+	UFUNCTION()
+	void DelayDestroyed();
 	/**
 	 * @brief 发起普通攻击
 	 */
 	virtual void CommAttack();
-	
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-	
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	                         AActor* DamageCauser) override;
 };
