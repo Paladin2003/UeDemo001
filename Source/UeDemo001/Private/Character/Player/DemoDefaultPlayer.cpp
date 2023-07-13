@@ -68,9 +68,12 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 
 void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& InputActionValue)
 {
-	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
-	AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
-	AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
+	if (!bAttacking)
+	{
+		const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
+		AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
+		AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
+	}
 }
 
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)

@@ -61,6 +61,8 @@ public:
 	virtual void AttackFireBall();
 
 protected:
+
+	bool bLockRotate;
 	/**
 	 * @brief 当前血量
 	 */

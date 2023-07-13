@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Widget/DamageTipWidget.h"
+#include "kismet/KismetMathLibrary.h"
 
 // Sets default values
 ADemoBaseCharacter::ADemoBaseCharacter()
@@ -109,10 +110,16 @@ void ADemoBaseCharacter::AttackFireBall()
 
 void ADemoBaseCharacter::CommAttack()
 {
-	if(!bAttacking)
-	{
+	if(!bAttacking)	{
 		bAttacking = true;
+		bLockRotate = true;
+		
+		FHitResult HitResult;
+		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
+		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
+		SetActorRotation(FRotator(0,Rotator.Yaw,0));
 		PlayAnimMontage(AttackAnimMontage,1.25f);
+		
 	}
 }
 

@@ -5,6 +5,8 @@
 
 ADemoDefaultPlayerController::ADemoDefaultPlayerController()
 {
+
+	bShowMouseCursor = true;
 }
 
 void ADemoDefaultPlayerController::BeginPlay()
