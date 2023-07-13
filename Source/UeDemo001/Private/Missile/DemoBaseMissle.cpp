@@ -42,6 +42,7 @@ ADemoBaseMissle::ADemoBaseMissle()
 void ADemoBaseMissle::BeginPlay()
 {
 	Super::BeginPlay();
+	this->SetLifeSpan(DestroyDelayTime);
 }
 
 void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -49,11 +50,10 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 	if(!bOverlapped)
 	{
 		bOverlapped = true;
-		UE_LOG(LogTemp,Warning,TEXT("触发重叠事件。。。。"));
-		if (ADemoDefaultEnemy* DemoDefaultEnemy = Cast<ADemoDefaultEnemy>(Other))
+		if (ADemoBaseCharacter* DemoBaseCharacter = Cast<ADemoBaseCharacter>(Other))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("击中目标：%s"),*FName(DemoDefaultEnemy->GetName()).ToString());
-			UGameplayStatics::ApplyDamage(DemoDefaultEnemy,Damage,DemoDefaultEnemy->GetController(),this,nullptr);
+			UGameplayStatics::ApplyDamage(DemoBaseCharacter,Damage,DemoBaseCharacter->GetController(),this,nullptr);
+			this->Destroy();
 		}
 	}
 }
@@ -63,5 +63,10 @@ void ADemoBaseMissle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADemoBaseMissle::Destroyed()
+{
+	Super::Destroyed();
 }
 

@@ -52,8 +52,7 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	AActor* DamageCauser)
 {
 	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	this->CurHp -= Damage;
-	UE_LOG(LogTemp,Warning,TEXT("敌方【%s】受到%f点伤害,当前血量：%d/%d"),*FName(this->GetName()).ToString(),Damage,CurHp,MaxHp);
+	this->CurHp  = CurHp - Damage <= 0 ? 0 : CurHp - Damage;
 
 	//受到伤害停止移动
 	GetMovementComponent()->StopActiveMovement();
@@ -65,8 +64,6 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	}else
 	{
 		bIsHit = true;
-		UE_LOG(LogTemp,Warning,TEXT("%s 播放受攻击动画。%s。"),*FName(this->GetName()).ToString(),*FName(HitAnimMontage->GetName()).ToString());
-
 		PlayAnimMontage(HitAnimMontage,1.f);
 		
 		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
@@ -98,14 +95,11 @@ void ADemoBaseCharacter::AttackEndNotify()
 void ADemoBaseCharacter::HitEndNotify()
 {
 	bIsHit = false;
-	UE_LOG(LogTemp,Warning,TEXT("%s 的 当前被攻击状态是：%d"),*FName(this->GetName()).ToString(),bIsHit);
 }
 
 void ADemoBaseCharacter::AttackFireBall()
 {
-	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
-	ADemoBaseMissle* DemoBaseMissle = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
-	DemoBaseMissle->SetLifeSpan(DemoBaseMissle -> DestroyDelayTime);
+	GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
 }
 
 void ADemoBaseCharacter::CommAttack()
@@ -119,7 +113,6 @@ void ADemoBaseCharacter::CommAttack()
 		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
 		SetActorRotation(FRotator(0,Rotator.Yaw,0));
 		PlayAnimMontage(AttackAnimMontage,1.25f);
-		
 	}
 }
 
