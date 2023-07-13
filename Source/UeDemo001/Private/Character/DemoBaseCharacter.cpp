@@ -2,10 +2,12 @@
 
 
 #include "Character/DemoBaseCharacter.h"
-
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Widget/DamageTipWidget.h"
 
 // Sets default values
 ADemoBaseCharacter::ADemoBaseCharacter()
@@ -45,6 +47,37 @@ void ADemoBaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	this->CurHp -= Damage;
+	UE_LOG(LogTemp,Warning,TEXT("敌方【%s】受到%f点伤害,当前血量：%d/%d"),*FName(this->GetName()).ToString(),Damage,CurHp,MaxHp);
+
+	//受到伤害停止移动
+	GetMovementComponent()->StopActiveMovement();
+	
+	if(CurHp <= 0)
+	{
+		this->bIsDie = true;
+		this->bIsRunning = false;
+	}else
+	{
+		bIsHit = true;
+		UE_LOG(LogTemp,Warning,TEXT("%s 播放受攻击动画。%s。"),*FName(this->GetName()).ToString(),*FName(HitAnimMontage->GetName()).ToString());
+
+		PlayAnimMontage(HitAnimMontage,1.f);
+		
+		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
+		TipWidget->DamageValue = Damage;
+		TipWidget->AddToViewport(0);
+		FVector2D ScreenPosition ;
+		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
+		TipWidget->SetPositionInViewport(ScreenPosition);	
+	}
+	return Damage;
+}
+
 // Called to bind functionality to input
 void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -61,6 +94,12 @@ void ADemoBaseCharacter::AttackEndNotify()
 	bAttacking = false;
 }
 
+void ADemoBaseCharacter::HitEndNotify()
+{
+	bIsHit = false;
+	UE_LOG(LogTemp,Warning,TEXT("%s 的 当前被攻击状态是：%d"),*FName(this->GetName()).ToString(),bIsHit);
+}
+
 void ADemoBaseCharacter::AttackFireBall()
 {
 	UE_LOG(LogTemp,Warning,TEXT("====普通攻击发射火球------"));
@@ -70,6 +109,10 @@ void ADemoBaseCharacter::AttackFireBall()
 
 void ADemoBaseCharacter::CommAttack()
 {
-	
+	if(!bAttacking)
+	{
+		bAttacking = true;
+		PlayAnimMontage(AttackAnimMontage,1.25f);
+	}
 }
 

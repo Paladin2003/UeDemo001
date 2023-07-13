@@ -44,12 +44,6 @@ void ADemoDefaultPlayer::Tick(float DeltaSeconds)
 void ADemoDefaultPlayer::CommAttack()
 {
 	Super::CommAttack();
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if(!bAttacking && AttackAnimMontage && AnimInstance && !AnimInstance->Montage_IsPlaying(AttackAnimMontage))
-	{
-		bAttacking = true;
-		AnimInstance->Montage_Play(AttackAnimMontage,1.25f);
-	}
 }
 
 void ADemoDefaultPlayer::InitEnhancedInput()

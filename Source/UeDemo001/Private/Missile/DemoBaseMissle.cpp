@@ -46,16 +46,16 @@ void ADemoBaseMissle::BeginPlay()
 
 void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp,Warning,TEXT("触发重叠事件。。。。"));
-	
-	if (ADemoDefaultEnemy* DemoDefaultEnemy = Cast<ADemoDefaultEnemy>(Other))
+	if(!bOverlapped)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("击中目标：%s"),*FName(DemoDefaultEnemy->GetName()).ToString());
-
-		UGameplayStatics::ApplyDamage(DemoDefaultEnemy,Damage,DemoDefaultEnemy->GetController(),this,nullptr);
+		bOverlapped = true;
+		UE_LOG(LogTemp,Warning,TEXT("触发重叠事件。。。。"));
+		if (ADemoDefaultEnemy* DemoDefaultEnemy = Cast<ADemoDefaultEnemy>(Other))
+		{
+			UE_LOG(LogTemp,Warning,TEXT("击中目标：%s"),*FName(DemoDefaultEnemy->GetName()).ToString());
+			UGameplayStatics::ApplyDamage(DemoDefaultEnemy,Damage,DemoDefaultEnemy->GetController(),this,nullptr);
+		}
 	}
-
-	
 }
 
 // Called every frame

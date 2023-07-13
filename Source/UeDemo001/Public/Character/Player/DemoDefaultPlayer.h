@@ -62,11 +62,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> AttackInputAction;
 
-	/**
-	 * @brief 普通攻击动画蒙太奇
-	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Anim")
-	class UAnimMontage* AttackAnimMontage;
 	
 	virtual void BeginPlay() override;
 

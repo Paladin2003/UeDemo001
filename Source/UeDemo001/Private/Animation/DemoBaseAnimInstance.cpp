@@ -17,6 +17,8 @@ void UDemoBaseAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		bAttacking = OwnerCharacter->bAttacking;
 		bDie = OwnerCharacter->bIsDie;
+		bHit = OwnerCharacter->bIsHit;
+		UE_LOG(LogTemp,Warning,TEXT(""));
 		Velocity = OwnerCharacter->GetVelocity().Length();
 	} 
 }
