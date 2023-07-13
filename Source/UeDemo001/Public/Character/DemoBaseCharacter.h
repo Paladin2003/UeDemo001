@@ -112,6 +112,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Anim")
 	class UAnimMontage* AttackAnimMontage;
 
+	/**
+	 * @brief 魔法攻击动画蒙太奇
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Anim")
+	class UAnimMontage* MagicAttackAnimMontage;
+
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -135,6 +141,13 @@ protected:
 	virtual void CommAttack();
 
 	/**
+	 * @brief 魔法攻击生成
+	 * @param BallCount 
+	 * @param LocationEnd 
+	 */
+	void CreateMagicFireBall(const int32 BallCount, const FVector& LocationEnd) const;
+
+	/**
 	 * @brief 发起魔法攻击
 	 */
 	virtual void MagicAttack();
@@ -142,7 +155,7 @@ protected:
 	/**
 	 * @brief 攻击前转身面对攻击点
 	 */
-	void RotateBeforeAttack();
+	FVector RotateBeforeAttack();
 
 	virtual void BeginPlay() override;
 

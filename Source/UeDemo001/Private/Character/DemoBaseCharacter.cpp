@@ -2,6 +2,7 @@
 
 
 #include "Character/DemoBaseCharacter.h"
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
@@ -78,12 +79,13 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	return Damage;
 }
 
-void ADemoBaseCharacter::RotateBeforeAttack()
+FVector ADemoBaseCharacter::RotateBeforeAttack()
 {
 	FHitResult HitResult;
 	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
-	FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
+	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
 	SetActorRotation(FRotator(0,Rotator.Yaw,0));
+	return HitResult.Location;
 }
 
 // Called to bind functionality to input
@@ -124,10 +126,24 @@ void ADemoBaseCharacter::CommAttack()
 void ADemoBaseCharacter::MagicAttack()
 {
 	bSustainedAttacking = true;
-	RotateBeforeAttack();
-	if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackAnimMontage)) 
+	FVector TargetLocation = RotateBeforeAttack();
+	if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(MagicAttackAnimMontage)) 
 	{
-		PlayAnimMontage(AttackAnimMontage,1.25f);
+		PlayAnimMontage(MagicAttackAnimMontage,0.35f);
+		this->CreateMagicFireBall(5,TargetLocation);
+	}
+}
+
+void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVector& TargetLocation) const
+{
+	for (int i = 0; i < BallCount; ++i)
+	{
+		FVector StartLocation = TargetLocation + FVector(0 + UKismetMathLibrary::RandomFloatInRange(0.f,200.f),
+			800 + UKismetMathLibrary::RandomFloatInRange(0.f,200.f),800 +UKismetMathLibrary::RandomFloatInRange(0.f,100.f));
+		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,200.f),
+			UKismetMathLibrary::RandomFloatInRange(0.f,200.f),0);
+		const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(StartLocation,RandomTargetLocation);
+		GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator);
 	}
 }
 

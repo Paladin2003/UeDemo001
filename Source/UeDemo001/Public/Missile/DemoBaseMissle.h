@@ -13,9 +13,12 @@ class UEDEMO001_API ADemoBaseMissle : public AActor
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this actor's properties
+public:
+
 	ADemoBaseMissle();
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UProjectileMovementComponent* Movement;
 
 protected:
 
@@ -27,9 +30,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UProjectileMovementComponent* Movement;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UParticleSystemComponent* Partical;
