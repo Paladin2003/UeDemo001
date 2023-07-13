@@ -78,6 +78,14 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	return Damage;
 }
 
+void ADemoBaseCharacter::RotateBeforeAttack()
+{
+	FHitResult HitResult;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
+	FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
+	SetActorRotation(FRotator(0,Rotator.Yaw,0));
+}
+
 // Called to bind functionality to input
 void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -106,14 +114,19 @@ void ADemoBaseCharacter::AttackFireBall()
 
 void ADemoBaseCharacter::CommAttack()
 {
-	if(!bAttacking)	{
+	if(!bAttacking && !bSustainedAttacking)	{
 		bAttacking = true;
-		bLockRotate = true;
-		
-		FHitResult HitResult;
-		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
-		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
-		SetActorRotation(FRotator(0,Rotator.Yaw,0));
+		this->RotateBeforeAttack();
+		PlayAnimMontage(AttackAnimMontage,1.25f);
+	}
+}
+
+void ADemoBaseCharacter::MagicAttack()
+{
+	bSustainedAttacking = true;
+	RotateBeforeAttack();
+	if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackAnimMontage)) 
+	{
 		PlayAnimMontage(AttackAnimMontage,1.25f);
 	}
 }

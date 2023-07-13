@@ -50,7 +50,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 	if(!bOverlapped)
 	{
 		bOverlapped = true;
-		if (ADemoBaseCharacter* DemoBaseCharacter = Cast<ADemoBaseCharacter>(Other))
+		if (ADemoBaseCharacter* DemoBaseCharacter = Cast<ADemoBaseCharacter>(Other); DemoBaseCharacter && !DemoBaseCharacter->bIsDie)
 		{
 			//生成伤害
 			UGameplayStatics::ApplyDamage(DemoBaseCharacter,Damage,DemoBaseCharacter->GetController(),this,nullptr);

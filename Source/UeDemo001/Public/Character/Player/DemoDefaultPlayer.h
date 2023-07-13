@@ -62,6 +62,13 @@ protected:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
 	TObjectPtr<UInputAction> AttackInputAction;
 
+
+	/**
+	* @brief 攻击输入
+	*/
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	TObjectPtr<UInputAction> MagicAttackInputAction;
+	
 	
 	virtual void BeginPlay() override;
 
@@ -76,9 +83,33 @@ private:
 	 */
 	void InitEnhancedInput();
 
+	/**
+	 * @brief 移动输入
+	 * @param InputActionValue 
+	 */
 	virtual void MovementForEnhancedInput(const FInputActionValue& InputActionValue);
 
+	/**
+	 * @brief 走/跑切换输入
+	 * @param InputActionValue 
+	 */
 	virtual void RunningForEnhancedInput(const FInputActionValue& InputActionValue);
 
+	/**
+	 * @brief 普通攻击输入
+	 * @param InputActionValue 
+	 */
 	virtual void AttackForEnhancedInput(const FInputActionValue& InputActionValue);
+
+	/**
+	 * @brief 魔法攻击输入
+	 * @param InputActionValue 
+	 */
+	virtual void MagicAttackForEnhancedInput(const FInputActionValue& InputActionValue);
+
+	/**
+	 * @brief 结束魔法攻击输入
+	 * @param InputActionValue 
+	 */
+	virtual void EndMagicAttackForEnhancedInput(const FInputActionValue& InputActionValue);
 };

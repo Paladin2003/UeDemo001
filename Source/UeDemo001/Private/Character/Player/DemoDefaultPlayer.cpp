@@ -62,18 +62,18 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 			EnhancedInputComponent->BindAction(RunningInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::RunningForEnhancedInput);
 
 			EnhancedInputComponent->BindAction(AttackInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::AttackForEnhancedInput);
+			EnhancedInputComponent->BindAction(MagicAttackInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MagicAttackForEnhancedInput);
+			EnhancedInputComponent->BindAction(MagicAttackInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::EndMagicAttackForEnhancedInput);
+			
 		}
 	}
 }
 
 void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& InputActionValue)
 {
-	if (!bAttacking)
-	{
-		const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
-		AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
-		AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
-	}
+	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
+	AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
+	AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
 }
 
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
@@ -86,3 +86,14 @@ void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputAc
 {
 	CommAttack();
 }
+
+void ADemoDefaultPlayer::MagicAttackForEnhancedInput(const FInputActionValue& InputActionValue)
+{
+	MagicAttack();
+}
+
+void ADemoDefaultPlayer::EndMagicAttackForEnhancedInput(const FInputActionValue& InputActionValue)
+{
+	bSustainedAttacking = false;
+}
+	

@@ -61,7 +61,10 @@ public:
 	virtual void AttackFireBall();
 
 protected:
-	bool bLockRotate;
+	/**
+	 * @brief 持续攻击中
+	 */
+	bool bSustainedAttacking;
 	/**
 	 * @brief 当前血量
 	 */
@@ -112,6 +115,10 @@ protected:
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/**
+	 * @brief 设置角色最大行走速度
+	 * @param MaxWalkSpeed 
+	 */
 	virtual void SetCharactorMaxWalkSpeed(float MaxWalkSpeed);
 
 protected:
@@ -127,10 +134,28 @@ protected:
 	 */
 	virtual void CommAttack();
 
+	/**
+	 * @brief 发起魔法攻击
+	 */
+	virtual void MagicAttack();
+
+	/**
+	 * @brief 攻击前转身面对攻击点
+	 */
+	void RotateBeforeAttack();
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
+	/**
+	 * @brief 处理伤害事件
+	 * @param DamageAmount 
+	 * @param DamageEvent 
+	 * @param EventInstigator 
+	 * @param DamageCauser 
+	 * @return 
+	 */
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	                         AActor* DamageCauser) override;
 };
