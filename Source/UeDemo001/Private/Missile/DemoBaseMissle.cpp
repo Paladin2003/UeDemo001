@@ -52,7 +52,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 {
 	if (!bOverlapped)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("子弹%s已命中。。。"),*FName(this->GetName()).ToString());
+		// UE_LOG(LogTemp,Warning,TEXT("子弹%s已命中。。。"),*FName(this->GetName()).ToString());
 		bOverlapped = true;
 		
 		if (ADemoBaseCharacter* DemoBaseCharacter = Cast<ADemoBaseCharacter>(Other); DemoBaseCharacter && !
@@ -76,13 +76,11 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		// 生成爆炸伤害
 		if (bHasBoomDamaged && !OutHits->IsEmpty()) 
 		{
-			UE_LOG(LogTemp,Warning,TEXT("有%d名敌人被子弹%s产生的爆炸击中"),OutHits->Num(),*FName(this->GetName()).ToString());
+			// UE_LOG(LogTemp,Warning,TEXT("有%d名敌人被子弹%s产生的爆炸击中"),OutHits->Num(),*FName(this->GetName()).ToString());
 			for(auto i = OutHits->begin();i != OutHits->end();++i)
 			{
 				const FHitResult HitResult = *i;
-
-				UE_LOG(LogTemp,Warning,TEXT("循环当前被爆炸击中的组件：%s"),*FName(HitResult.GetComponent()->GetName()).ToString());
-				UE_LOG(LogTemp,Warning,TEXT("循环当前被爆炸击中的敌人：%s"),*FName(HitResult.GetActor()->GetName()).ToString());
+				// UE_LOG(LogTemp,Warning,TEXT("循环当前被爆炸击中的敌人：%s"),*FName(HitResult.GetActor()->GetName()).ToString());
 				if (ADemoBaseCharacter* BaseCharacter = Cast<ADemoBaseCharacter>(HitResult.GetActor()))
 				{
 					UGameplayStatics::ApplyDamage(BaseCharacter,

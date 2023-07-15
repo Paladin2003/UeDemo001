@@ -58,7 +58,7 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	GetMovementComponent()->StopActiveMovement();
 	
 	//计算伤害
-	UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
+	// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
 	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	this->CurHp  = CurHp - Damage <= 0 ? 0 : CurHp - Damage;
 

@@ -21,6 +21,7 @@ protected:
 	/**
 	 * @brief 持续攻击中
 	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
 	bool bSustainedAttacking;
 
 	/**

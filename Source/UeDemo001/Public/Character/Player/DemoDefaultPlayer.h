@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Components/TimelineComponent.h"
 #include "DemoDefaultPlayer.generated.h"
 
 /**
@@ -25,6 +26,8 @@ public:
 	virtual void AttackFireBall() override;
 	
 protected:
+	
+	FTimeline TimeLine;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	USpringArmComponent* CameraArm;
@@ -32,6 +35,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UCameraComponent* Camera;
 
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UCurveFloat* FloatCurve;
+	
 	/**
 	 * @brief 后期盒子组件
 	 */
@@ -81,6 +87,12 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void CommAttack() override;
+
+	UFUNCTION()
+	void SustainedAttackPostBlendCallBack();
+
+	UFUNCTION()
+	void SustainedAttackPostBlendFinishedCallBack();
 	
 	
 private:
