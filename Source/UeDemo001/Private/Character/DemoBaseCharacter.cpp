@@ -33,14 +33,13 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 	//创建武器节点
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,"Weapon");
-	
 }
 
 // Called when the game starts or when spawned
 void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	SetCharactorMaxWalkSpeed(500.f);
+	SetCharacterMaxWalkSpeed(500.f);
 }
 
 // Called every frame
@@ -52,49 +51,64 @@ void ADemoBaseCharacter::Tick(float DeltaTime)
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	this->CurHp  = CurHp - Damage <= 0 ? 0 : CurHp - Damage;
+	//设置被击状态
+	bIsHit = true;
 
 	//受到伤害停止移动
 	GetMovementComponent()->StopActiveMovement();
 	
+	//计算伤害
+	UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
+	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	this->CurHp  = CurHp - Damage <= 0 ? 0 : CurHp - Damage;
+
+	//死亡判定
 	if(CurHp <= 0)
 	{
+		//设定死亡
 		this->bIsDie = true;
+		//清除奔跑状态
 		this->bIsRunning = false;
+		//清除普通攻击状态
+		this->bAttacking = false;
+		//清除持续攻击状态
+		this->bSustainedAttacking = false;
+		//清除被击状态
+		this->bIsHit = false;
+		//设置死亡后不再生成重叠事件
 		GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&ADemoBaseCharacter::DelayDestroyed,2.5f,false);
+		//设置延迟销毁
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&ADemoBaseCharacter::DelayDestroyed,DestroyDelay,false);
 	}else
 	{
-		bIsHit = true;
+		//播放被攻击动画 
 		PlayAnimMontage(HitAnimMontage,1.f);
-		
+
+		//显示伤害
 		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
 		TipWidget->DamageValue = Damage;
 		TipWidget->AddToViewport(0);
 		FVector2D ScreenPosition ;
 		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
+		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(0,50.f);
+		ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(0,50.f);
 		TipWidget->SetPositionInViewport(ScreenPosition);	
 	}
 	return Damage;
 }
 
-FVector ADemoBaseCharacter::RotateBeforeAttack()
+void ADemoBaseCharacter::RotateBeforeAttack()
 {
-	FHitResult HitResult;
-	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
-	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),HitResult.Location);
+	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetAttackPointByMouse());
 	SetActorRotation(FRotator(0,Rotator.Yaw,0));
-	return HitResult.Location;
 }
 
-// Called to bind functionality to input
 void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void ADemoBaseCharacter::SetCharactorMaxWalkSpeed(float MaxWalkSpeed)
+void ADemoBaseCharacter::SetCharacterMaxWalkSpeed(float MaxWalkSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }
@@ -126,24 +140,30 @@ void ADemoBaseCharacter::CommAttack()
 void ADemoBaseCharacter::MagicAttack()
 {
 	bSustainedAttacking = true;
-	FVector TargetLocation = RotateBeforeAttack();
-	if (!GetMesh()->GetAnimInstance()->Montage_IsPlaying(MagicAttackAnimMontage)) 
+	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(MagicAttackAnimMontage))
 	{
-		PlayAnimMontage(MagicAttackAnimMontage,0.35f);
-		this->CreateMagicFireBall(5,TargetLocation);
+		PlayAnimMontage(MagicAttackAnimMontage,0.8f);
+		this->CreateMagicFireBall(1,GetAttackPointByMouse());
 	}
+}
+
+FVector ADemoBaseCharacter::GetAttackPointByMouse() const
+{
+	FHitResult HitResult;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery1,true,HitResult);
+	return HitResult.Location;
 }
 
 void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVector& TargetLocation) const
 {
 	for (int i = 0; i < BallCount; ++i)
 	{
-		FVector StartLocation = TargetLocation + FVector(0 + UKismetMathLibrary::RandomFloatInRange(0.f,200.f),
-			800 + UKismetMathLibrary::RandomFloatInRange(0.f,200.f),800 +UKismetMathLibrary::RandomFloatInRange(0.f,100.f));
-		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,200.f),
-			UKismetMathLibrary::RandomFloatInRange(0.f,200.f),0);
+		FVector StartLocation = TargetLocation + FVector(0 + UKismetMathLibrary::RandomFloatInRange(0.f,300.f),
+			800 + UKismetMathLibrary::RandomFloatInRange(0.f,300.f),800 +UKismetMathLibrary::RandomFloatInRange(0.f,100.f));
+		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,100.f),
+			UKismetMathLibrary::RandomFloatInRange(0.f,100.f),0);
 		const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(StartLocation,RandomTargetLocation);
-		GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator);
+		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator); 
 	}
 }
 

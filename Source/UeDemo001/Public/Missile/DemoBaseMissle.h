@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UProjectileMovementComponent* Movement;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UParticleSystemComponent* Particle;
+
 protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Damage")
@@ -30,9 +33,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UParticleSystemComponent* Partical;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UParticleSystem* BoomParticle;

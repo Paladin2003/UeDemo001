@@ -7,7 +7,6 @@
 
 ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
-
 	bAttacking = false;
 	
 	//创建弹簧臂组件
@@ -23,6 +22,10 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	//创建摄像机组件
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
+
+	//创建后期盒子组件
+	PostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
+	PostProcess->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void ADemoDefaultPlayer::AttackFireBall()
@@ -64,22 +67,24 @@ void ADemoDefaultPlayer::InitEnhancedInput()
 			EnhancedInputComponent->BindAction(AttackInputAction,ETriggerEvent::Started,this,&ADemoDefaultPlayer::AttackForEnhancedInput);
 			EnhancedInputComponent->BindAction(MagicAttackInputAction,ETriggerEvent::Triggered,this,&ADemoDefaultPlayer::MagicAttackForEnhancedInput);
 			EnhancedInputComponent->BindAction(MagicAttackInputAction,ETriggerEvent::Completed,this,&ADemoDefaultPlayer::EndMagicAttackForEnhancedInput);
-			
 		}
 	}
 }
 
 void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& InputActionValue)
 {
-	const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
-	AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
-	AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
+	if(!bAttacking)
+	{
+		const FVector2d MovementValue = InputActionValue.Get<FVector2d>();
+		AddMovementInput(FVector(1,0,0) * MovementValue.X, 1);
+		AddMovementInput(FVector(0,1,0) * MovementValue.Y,1);
+	}
 }
 
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	SetCharactorMaxWalkSpeed(bIsRunning ? 800.f : 500.f);
+	SetCharacterMaxWalkSpeed(bIsRunning ? 800.f : 500.f);
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)

@@ -33,6 +33,12 @@ protected:
 	UCameraComponent* Camera;
 
 	/**
+	 * @brief 后期盒子组件
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPostProcessComponent* PostProcess;
+
+	/**
 	 * @brief 移动场景映射
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")

@@ -15,5 +15,5 @@ void ADemoDefaultEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetCharactorMaxWalkSpeed(300.f);
+	SetCharacterMaxWalkSpeed(300.f);
 }

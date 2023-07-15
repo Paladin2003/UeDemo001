@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/PostProcessComponent.h"
 #include "GameFramework/Character.h"
 #include "Missile/DemoBaseMissle.h"
 #include "GameFramework/Actor.h"
 #include "Widget/DamageTipWidget.h"
-
 #include "DemoBaseCharacter.generated.h"
 
 UCLASS()
@@ -17,6 +17,28 @@ class UEDEMO001_API ADemoBaseCharacter : public ACharacter
 
 protected:
 	ADemoBaseCharacter();
+
+	/**
+	 * @brief 持续攻击中
+	 */
+	bool bSustainedAttacking;
+
+	/**
+	 * @brief 死亡后延迟销毁时间
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
+	float DestroyDelay = 2.5f;
+	
+	/**
+	 * @brief 当前血量
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
+	int32 CurHp = 10;
+	/**
+	 * @brief 最大血量
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
+	int32 MaxHp = 10;
 
 public:
 	/**
@@ -44,7 +66,7 @@ public:
 	bool bIsHit;
 
 	/**
-	 * @brief 攻击后的通知
+	 * @brief 普通攻击结束后的通知
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEndNotify();
@@ -54,27 +76,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void HitEndNotify();
+	
 	/**
-	 * @brief 攻击时产生发射物的通知
+	 * @brief 普通攻击时触发发射物的通知
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackFireBall();
 
 protected:
-	/**
-	 * @brief 持续攻击中
-	 */
-	bool bSustainedAttacking;
-	/**
-	 * @brief 当前血量
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
-	int32 CurHp = 10;
-	/**
-	 * @brief 最大血量
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init")
-	int32 MaxHp = 10;
 
 	/**
 	 * @brief 伤害显示UI
@@ -125,9 +134,10 @@ public:
 	 * @brief 设置角色最大行走速度
 	 * @param MaxWalkSpeed 
 	 */
-	virtual void SetCharactorMaxWalkSpeed(float MaxWalkSpeed);
+	virtual void SetCharacterMaxWalkSpeed(float MaxWalkSpeed);
 
 protected:
+
 	FTimerHandle TimerHandle;
 
 	/**
@@ -152,10 +162,17 @@ protected:
 	 */
 	virtual void MagicAttack();
 
+
+	/**
+	 * @brief 根据鼠标获取攻击点
+	 * @return 
+	 */
+	FVector GetAttackPointByMouse() const;
+	
 	/**
 	 * @brief 攻击前转身面对攻击点
 	 */
-	FVector RotateBeforeAttack();
+	void RotateBeforeAttack();
 
 	virtual void BeginPlay() override;
 
