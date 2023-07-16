@@ -40,6 +40,7 @@ void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetCharacterMaxWalkSpeed(500.f);
+	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,MpAutoRecoverRate,true);
 }
 
 // Called every frame
@@ -48,24 +49,24 @@ void ADemoBaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ADemoBaseCharacter::Destroyed()
+{
+	GetWorld()->GetTimerManager().ClearTimer(DelayDestroyTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(RecoverMpTimerHandle);
+	Super::Destroyed();
+}
+
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+                                     AActor* DamageCauser)
 {
 	
 	ADemoBaseCharacter* DamageCauserCharacter = Cast<ADemoBaseCharacter>(DamageCauser);
 	if(nullptr == DamageCauserCharacter)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("未获取到伤害来源。。。。"));
+		// UE_LOG(LogTemp,Warning,TEXT("未获取到伤害来源。。。。"));
 		return 0.f;
 	}
-	TArray<FAssetRegistryTag>* OutTags  = new TArray<FAssetRegistryTag>();
-	this->GetAssetRegistryTags(*OutTags);
-	for(auto i = OutTags->begin();i != OutTags->end();++i)
-	{
-		const FAssetRegistryTag HitResult = *i;
-		UE_LOG(LogTemp,Warning,TEXT("获取tag：%s。。。。"),*HitResult.Name.ToString());
-		
-	}
+	
 	//设置被击状态
 	bIsHit = true;
 
@@ -94,12 +95,12 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		//设置死亡后不再生成重叠事件
 		GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 
-		UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
-		UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
+		// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
+		// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
 		DamageCauserCharacter->CalculateExp(this->ExpValue);
 		
 		//设置延迟销毁
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&ADemoBaseCharacter::DelayDestroyed,DestroyDelay,false);
+		GetWorld()->GetTimerManager().SetTimer(DelayDestroyTimerHandle,this,&ADemoBaseCharacter::Destroyed,DestroyDelay,false);
 	}else
 	{
 		//播放被攻击动画 
@@ -206,9 +207,14 @@ void ADemoBaseCharacter::CommAttack()
 
 void ADemoBaseCharacter::MagicAttack()
 {
-	bSustainedAttacking = true;
 	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(MagicAttackAnimMontage))
 	{
+		if(CharacterInfo.CurMp <= 1)
+		{
+			return;
+		}
+		bSustainedAttacking = true;
+		CharacterInfo.CurMp -= 1;
 		PlayAnimMontage(MagicAttackAnimMontage,0.8f);
 		this->CreateMagicFireBall(1,GetAttackPointByMouse());
 	}
@@ -235,9 +241,11 @@ void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVecto
 	}
 }
 
-void ADemoBaseCharacter::DelayDestroyed()
+void ADemoBaseCharacter::AutoRecoverMp()
 {
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	this->Destroy();
+	if(CharacterInfo.CurMp <= CharacterInfo.MaxMp -1)
+	{
+		this->CharacterInfo.CurMp +=1;	
+	}
 }
 

@@ -122,12 +122,18 @@ public:
 	FCharacterInfo GetCharacterInfo();
 
 protected:
+	/**
+	 * @brief 延迟销毁的计时器
+	 */
+	FTimerHandle DelayDestroyTimerHandle;
 
-	FTimerHandle TimerHandle;
+	FTimerHandle RecoverMpTimerHandle;
 	
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Destroyed() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -155,6 +161,12 @@ protected:
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
 	float DestroyDelay = 2.5f;
+
+	/**
+	 * @brief MP恢复速率
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
+	float MpAutoRecoverRate = 1.f;
 
 	/**
 	 * @brief 死亡后能提供的经验值
@@ -208,7 +220,8 @@ protected:
 	 * @brief 延时销毁
 	 */
 	UFUNCTION()
-	void DelayDestroyed();
+	void AutoRecoverMp();
+	
 	/**
 	 * @brief 发起普通攻击
 	 */
