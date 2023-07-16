@@ -3,6 +3,10 @@
 
 #include "Character/Player/DemoDefaultPlayer.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Components/PostProcessComponent.h"
+#include "Widget/DemoCharacterHudWidget.h"
 #include "Engine/HitResult.h"
 
 ADemoDefaultPlayer::ADemoDefaultPlayer()
@@ -38,6 +42,10 @@ void ADemoDefaultPlayer::BeginPlay()
 	Super::BeginPlay();
 	InitEnhancedInput();
 
+	UDemoCharacterHudWidget* Hud = CreateWidget<UDemoCharacterHudWidget>(GetWorld(),CharacterHudWidget);
+	Hud->SetOwnerPlayer(this);
+	Hud->AddToViewport(0);
+	
 	if (FloatCurve)
 	{
 		FOnTimelineFloatStatic OnMagicAttackTickCallBack;

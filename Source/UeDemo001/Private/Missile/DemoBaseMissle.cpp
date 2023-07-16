@@ -52,6 +52,15 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 {
 	if (!bOverlapped)
 	{
+		//排除发射物创建者
+		if (Other->GetClass() == this->GetOwner()->GetClass())
+		{
+			return;
+		}
+		/*UE_LOG(LogTemp,Warning,TEXT("重叠对象%s类型：%s====；自动发动者对象类型：%s"),
+			*FName(Other->GetName()).ToString(),
+			*FName(Other->GetClass()->GetName()).ToString(),
+			*FName(this->GetOwner()->GetClass()->GetName()).ToString())*/
 		// UE_LOG(LogTemp,Warning,TEXT("子弹%s已命中。。。"),*FName(this->GetName()).ToString());
 		bOverlapped = true;
 		
@@ -59,9 +68,10 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 			DemoBaseCharacter->bIsDie)
 		{
 			//生成伤害
-			UGameplayStatics::ApplyDamage(DemoBaseCharacter, Damage, DemoBaseCharacter->GetController(), this, nullptr);
+			UGameplayStatics::ApplyDamage(DemoBaseCharacter, Damage,
+				DemoBaseCharacter->GetController(),
+				this->GetOwner(), nullptr);
 		}
-
 		//创建爆炸特效
 		UGameplayStatics::SpawnEmitterAtLocation(this, BoomParticle, this->GetActorLocation());
 
@@ -70,7 +80,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		const bool bHasBoomDamaged = UKismetSystemLibrary::SphereTraceMultiForObjects(this,
 									FVector(this->GetActorLocation().X,this->GetActorLocation().Y,0),
 									FVector(this->GetActorLocation().X,this->GetActorLocation().Y,0),
-									500.f, {EObjectTypeQuery::ObjectTypeQuery3}, false, {},
+									500.f, {EObjectTypeQuery::ObjectTypeQuery3}, false, {this->GetOwner()},
 									EDrawDebugTrace::Persistent, *OutHits, true,FLinearColor::Red,
 									FLinearColor::Green, 5.f);
 		// 生成爆炸伤害
@@ -81,11 +91,12 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 			{
 				const FHitResult HitResult = *i;
 				// UE_LOG(LogTemp,Warning,TEXT("循环当前被爆炸击中的敌人：%s"),*FName(HitResult.GetActor()->GetName()).ToString());
-				if (ADemoBaseCharacter* BaseCharacter = Cast<ADemoBaseCharacter>(HitResult.GetActor()))
+				if (ADemoBaseCharacter* BaseCharacter = Cast<ADemoBaseCharacter>(HitResult.GetActor()) ;
+					BaseCharacter && ! BaseCharacter->bIsDie)
 				{
 					UGameplayStatics::ApplyDamage(BaseCharacter,
 						UKismetMathLibrary::RandomFloatInRange(1.f,Damage),
-						BaseCharacter->GetController(), this, nullptr);
+						BaseCharacter->GetController(), this->GetOwner(), nullptr);
 				}
 			}
 		}

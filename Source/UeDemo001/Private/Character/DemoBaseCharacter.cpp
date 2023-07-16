@@ -51,6 +51,21 @@ void ADemoBaseCharacter::Tick(float DeltaTime)
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
+	
+	ADemoBaseCharacter* DamageCauserCharacter = Cast<ADemoBaseCharacter>(DamageCauser);
+	if(nullptr == DamageCauserCharacter)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("未获取到伤害来源。。。。"));
+		return 0.f;
+	}
+	TArray<FAssetRegistryTag>* OutTags  = new TArray<FAssetRegistryTag>();
+	this->GetAssetRegistryTags(*OutTags);
+	for(auto i = OutTags->begin();i != OutTags->end();++i)
+	{
+		const FAssetRegistryTag HitResult = *i;
+		UE_LOG(LogTemp,Warning,TEXT("获取tag：%s。。。。"),*HitResult.Name.ToString());
+		
+	}
 	//设置被击状态
 	bIsHit = true;
 
@@ -60,13 +75,14 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	//计算伤害
 	// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
 	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	this->CurHp  = CurHp - Damage <= 0 ? 0 : CurHp - Damage;
+	this->CharacterInfo.CurHp  = CharacterInfo.CurHp - Damage <= 0 ? 0 : CharacterInfo.CurHp - Damage;
 
 	//死亡判定
-	if(CurHp <= 0)
+	if(CharacterInfo.CurHp <= 0)
 	{
 		//设定死亡
 		this->bIsDie = true;
+
 		//清除奔跑状态
 		this->bIsRunning = false;
 		//清除普通攻击状态
@@ -77,6 +93,11 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		this->bIsHit = false;
 		//设置死亡后不再生成重叠事件
 		GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+
+		UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
+		UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
+		DamageCauserCharacter->CalculateExp(this->ExpValue);
+		
 		//设置延迟销毁
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&ADemoBaseCharacter::DelayDestroyed,DestroyDelay,false);
 	}else
@@ -86,11 +107,13 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 		//显示伤害
 		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
+		
 		TipWidget->DamageValue = Damage;
+		// UE_LOG(LogTemp,Warning,TEXT("造成了%d点伤害"),TipWidget->DamageValue);
 		TipWidget->AddToViewport(0);
 		FVector2D ScreenPosition ;
 		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
-		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(0,50.f);
+		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(0,100.f);
 		ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(0,50.f);
 		TipWidget->SetPositionInViewport(ScreenPosition);	
 	}
@@ -108,9 +131,48 @@ void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ADemoBaseCharacter::CalculateExp(const int32 InExp)
+{
+	UE_LOG(LogTemp,Warning,TEXT("%s本次获取经验值：%d"),*FName(this->GetName()).ToString(),InExp);
+	UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d,最大经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp,CharacterInfo.MaxExp);
+	if(CharacterInfo.CurExp + InExp < CharacterInfo.MaxExp)
+	{
+		this->CharacterInfo.CurExp += InExp;
+		UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp);
+	}
+	else
+	{
+		//升级
+		LevelUp(CharacterInfo.CurExp + InExp - CharacterInfo.MaxExp);
+	}
+}
+
+int32 ADemoBaseCharacter::LevelUp(const int32 LastLevelOverExp)
+{
+	UE_LOG(LogTemp,Warning,TEXT("%s当前经验值已满，开始升级，多余经验：%d"),*FName(this->GetName()).ToString(),LastLevelOverExp);
+	//等级+1
+	this->CharacterInfo.Level ++;
+
+	//计算下级经验最大值
+	this->CharacterInfo.MaxExp  =  CharacterInfo.MaxExp * 1.85;
+
+	//设置当前经验
+	this->CharacterInfo.CurExp = LastLevelOverExp;
+
+	//状态恢复
+	this->CharacterInfo.CurHp = CharacterInfo.MaxHp;
+	this->CharacterInfo.CurMp = CharacterInfo.MaxMp;
+	return  this->CharacterInfo.Level;
+}
+
 void ADemoBaseCharacter::SetCharacterMaxWalkSpeed(float MaxWalkSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+FCharacterInfo ADemoBaseCharacter::GetCharacterInfo()
+{
+	return this->CharacterInfo;
 }
 
 void ADemoBaseCharacter::AttackEndNotify()
@@ -125,7 +187,12 @@ void ADemoBaseCharacter::HitEndNotify()
 
 void ADemoBaseCharacter::AttackFireBall()
 {
-	GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,GetActorLocation() + GetActorForwardVector() * 100 ,GetActorRotation());
+	FTransform SpawnTransform = GetActorTransform();
+	SpawnTransform.SetLocation(SpawnTransform.GetLocation() +  GetActorForwardVector() * 100);
+	ADemoBaseMissle* NewMissile = Cast<ADemoBaseMissle>(
+		UGameplayStatics::BeginDeferredActorSpawnFromClass(
+			this,MissileClass,SpawnTransform,ESpawnActorCollisionHandlingMethod::AlwaysSpawn,this));
+	UGameplayStatics::FinishSpawningActor(NewMissile,SpawnTransform);
 }
 
 void ADemoBaseCharacter::CommAttack()
@@ -154,7 +221,7 @@ FVector ADemoBaseCharacter::GetAttackPointByMouse() const
 	return HitResult.Location;
 }
 
-void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVector& TargetLocation) const
+void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVector& TargetLocation)
 {
 	for (int i = 0; i < BallCount; ++i)
 	{
@@ -163,7 +230,8 @@ void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVecto
 		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,100.f),
 			UKismetMathLibrary::RandomFloatInRange(0.f,100.f),0);
 		const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(StartLocation,RandomTargetLocation);
-		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator); 
+		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator);
+		Missile->SetOwner(this);
 	}
 }
 

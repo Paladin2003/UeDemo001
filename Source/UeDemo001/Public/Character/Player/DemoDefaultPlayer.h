@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Camera/CameraComponent.h"
+
 #include "Character/DemoBaseCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Components/TimelineComponent.h"
+
 #include "DemoDefaultPlayer.generated.h"
 
 /**
@@ -30,57 +30,65 @@ protected:
 	FTimeline TimeLine;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	USpringArmComponent* CameraArm;
+	class USpringArmComponent* CameraArm;
 	
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	UCameraComponent* Camera;
+	class UCameraComponent* Camera;
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	/**
+	 * @brief 持续攻击时天暗的过渡曲线
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Damage")
 	UCurveFloat* FloatCurve;
 	
 	/**
 	 * @brief 后期盒子组件
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UPostProcessComponent* PostProcess;
+	class UPostProcessComponent* PostProcess;
 
 	/**
 	 * @brief 移动场景映射
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input",meta=(DisplayPriority = 1))
 	TObjectPtr<UInputMappingContext> MovementInputMappingContext;
 
 	/**
 	 * @brief 移动输入
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input")
 	TObjectPtr<UInputAction> MovementInputAction;
 
 	/**
 	 * @brief 转向输入
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input")
 	TObjectPtr<UInputAction> LookUpInputAction;
 
 	/**
 	 * @brief 奔跑输入
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input")
 	TObjectPtr<UInputAction> RunningInputAction;
 
 	/**
 	 * @brief 攻击输入
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input")
 	TObjectPtr<UInputAction> AttackInputAction;
 
 
 	/**
 	* @brief 攻击输入
 	*/
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Enhanced Input")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,Category="Init|Enhanced Input")
 	TObjectPtr<UInputAction> MagicAttackInputAction;
-	
+
+	/**
+	 * @brief 角色HUD
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|UI",meta=(DisplayPriority = 4))
+	TSubclassOf<class UDemoCharacterHudWidget> CharacterHudWidget;
 	
 	virtual void BeginPlay() override;
 

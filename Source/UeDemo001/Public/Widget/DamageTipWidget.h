@@ -43,7 +43,7 @@ protected:
 	 * @return 
 	 */
 	UFUNCTION()
-	FText GetDamageValue();
+	FText GetDamageValue() const;
 
 	/**
 	 * @brief 自动销毁回调

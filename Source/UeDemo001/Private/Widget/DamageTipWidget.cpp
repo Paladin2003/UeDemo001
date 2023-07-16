@@ -16,7 +16,7 @@ void UDamageTipWidget::NativeOnInitialized()
 	DamageTip->TextDelegate.BindUFunction(this, "GetDamageValue");
 }
 
-FText UDamageTipWidget::GetDamageValue()
+FText UDamageTipWidget::GetDamageValue() const
 {
 	return FText::AsNumber(DamageValue);
 }

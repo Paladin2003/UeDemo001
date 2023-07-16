@@ -18,7 +18,8 @@ class UEDEMO001_API ADemoDefaultEnemy : public ADemoBaseCharacter
 	ADemoDefaultEnemy();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Init|AI",meta=(DisplayPriority = 7
+		))
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 protected:
