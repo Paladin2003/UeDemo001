@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Character/Enemy/DemoDefaultEnemy.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 EBTNodeResult::Type UDemoEnemyMovementTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -16,6 +17,7 @@ EBTNodeResult::Type UDemoEnemyMovementTask::ExecuteTask(UBehaviorTreeComponent& 
 		//是否已死亡
 		if(BaseCharacter->bIsDie)
 		{
+			BaseCharacter->GetMovementComponent()->StopActiveMovement();
 			return EBTNodeResult::Failed;
 		}
 		
@@ -31,5 +33,5 @@ EBTNodeResult::Type UDemoEnemyMovementTask::ExecuteTask(UBehaviorTreeComponent& 
 			}
 		}
 	}
-	return EBTNodeResult::Failed;;
+	return EBTNodeResult::Failed;
 }

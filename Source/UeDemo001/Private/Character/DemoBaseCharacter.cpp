@@ -3,6 +3,8 @@
 
 #include "Character/DemoBaseCharacter.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
@@ -39,21 +41,26 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	SetCharacterMaxWalkSpeed(500.f);
+	SetCharacterMaxWalkSpeed(DefaultWalkSpeed);
 	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,MpAutoRecoverRate,true);
+
+	FOnTimelineFloatStatic OnDashTimeLineTick;
+	FOnTimelineEventStatic OnDashTimeLineFinished;
+
+	OnDashTimeLineTick.BindUFunction(this,TEXT("OnDashTick"));
+	OnDashTimeLineFinished.BindUFunction(this,TEXT("OnDashFinished"));
+
+	DashTimeLine.AddInterpFloat(DashCurve,OnDashTimeLineTick);
+	DashTimeLine.SetTimelineFinishedFunc(OnDashTimeLineFinished);
+	DashTimeLine.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
 }
 
 // Called every frame
 void ADemoBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ADemoBaseCharacter::Destroyed()
-{
-	GetWorld()->GetTimerManager().ClearTimer(DelayDestroyTimerHandle);
-	GetWorld()->GetTimerManager().ClearTimer(RecoverMpTimerHandle);
-	Super::Destroyed();
+	DashTimeLine.TickTimeline(DeltaTime);
+	
 }
 
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -66,13 +73,17 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		// UE_LOG(LogTemp,Warning,TEXT("未获取到伤害来源。。。。"));
 		return 0.f;
 	}
-	
+
+	//设置黑板值
+	if (UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this))
+	{
+		BlackboardComponent->SetValueAsObject("Player",DamageCauser);
+		TriggerTimeDash(0,0);
+	}
+
 	//设置被击状态
 	bIsHit = true;
 
-	//受到伤害停止移动
-	GetMovementComponent()->StopActiveMovement();
-	
 	//计算伤害
 	// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
 	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -81,8 +92,12 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	//死亡判定
 	if(CharacterInfo.CurHp <= 0)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("%s==已死亡----"),*FName(this->GetName()).ToString());
 		//设定死亡
 		this->bIsDie = true;
+
+		//受到伤害停止移动
+		GetMovementComponent()->StopActiveMovement();
 
 		//清除奔跑状态
 		this->bIsRunning = false;
@@ -100,7 +115,7 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		DamageCauserCharacter->CalculateExp(this->ExpValue);
 		
 		//设置延迟销毁
-		GetWorld()->GetTimerManager().SetTimer(DelayDestroyTimerHandle,this,&ADemoBaseCharacter::Destroyed,DestroyDelay,false);
+		DelayDestroy();
 	}else
 	{
 		//播放被攻击动画 
@@ -121,6 +136,33 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	return Damage;
 }
 
+void ADemoBaseCharacter::TriggerTimeDash(const float DurationTime, const float DashRate)
+{
+	if(DashCurve)
+	{
+		DashTimeLine.Play();
+	}
+}
+
+void ADemoBaseCharacter::OnDashTick()
+{
+	float DushRate = DashCurve->GetFloatValue(DashTimeLine.GetPlaybackPosition());
+	// UE_LOG(LogTemp,Warning,TEXT("获取到冲刺的倍率：%f"),DushRate);
+	SetCharacterMaxWalkSpeed(DefaultWalkSpeed * DushRate);
+}
+
+void ADemoBaseCharacter::OnDashFinished()
+{
+	// UE_LOG(LogTemp,Warning,TEXT("加速冲刺完成。。。"));
+}
+
+void ADemoBaseCharacter::ExecuteDelayDestroy()
+{
+	GetWorldTimerManager().ClearTimer(DelayDestroyTimerHandle);
+	GetWorldTimerManager().ClearTimer(RecoverMpTimerHandle);
+	this->Destroy();
+}
+
 void ADemoBaseCharacter::RotateBeforeAttack()
 {
 	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetAttackPointByMouse());
@@ -134,12 +176,12 @@ void ADemoBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ADemoBaseCharacter::CalculateExp(const int32 InExp)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%s本次获取经验值：%d"),*FName(this->GetName()).ToString(),InExp);
-	UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d,最大经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp,CharacterInfo.MaxExp);
+	// UE_LOG(LogTemp,Warning,TEXT("%s本次获取经验值：%d"),*FName(this->GetName()).ToString(),InExp);
+	// UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d,最大经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp,CharacterInfo.MaxExp);
 	if(CharacterInfo.CurExp + InExp < CharacterInfo.MaxExp)
 	{
 		this->CharacterInfo.CurExp += InExp;
-		UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp);
+		// UE_LOG(LogTemp,Warning,TEXT("%s当前经验值：%d"),*FName(this->GetName()).ToString(),CharacterInfo.CurExp);
 	}
 	else
 	{
@@ -150,7 +192,7 @@ void ADemoBaseCharacter::CalculateExp(const int32 InExp)
 
 int32 ADemoBaseCharacter::LevelUp(const int32 LastLevelOverExp)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%s当前经验值已满，开始升级，多余经验：%d"),*FName(this->GetName()).ToString(),LastLevelOverExp);
+	// UE_LOG(LogTemp,Warning,TEXT("%s当前经验值已满，开始升级，多余经验：%d"),*FName(this->GetName()).ToString(),LastLevelOverExp);
 	//等级+1
 	this->CharacterInfo.Level ++;
 
@@ -198,11 +240,20 @@ void ADemoBaseCharacter::AttackFireBall()
 
 void ADemoBaseCharacter::CommAttack()
 {
+	UE_LOG(LogTemp,Warning,TEXT("开始普通攻击。。。。"));
 	if(!bAttacking && !bSustainedAttacking)	{
 		bAttacking = true;
+		UE_LOG(LogTemp,Warning,TEXT("开始定位攻击方向。。。。"));
 		this->RotateBeforeAttack();
+		UE_LOG(LogTemp,Warning,TEXT("开始播放攻击动画。。。。"));
 		PlayAnimMontage(AttackAnimMontage,1.25f);
+		UE_LOG(LogTemp,Warning,TEXT("开始播放动画完成。。。。"));
 	}
+}
+
+void ADemoBaseCharacter::DelayDestroy()
+{
+	GetWorldTimerManager().SetTimer(DelayDestroyTimerHandle,this,&ADemoBaseCharacter::ExecuteDelayDestroy,DestroyDelay,false);
 }
 
 void ADemoBaseCharacter::MagicAttack()

@@ -7,6 +7,7 @@
 #include "Missile/DemoBaseMissle.h"
 #include "GameFramework/Actor.h"
 #include "Widget/DamageTipWidget.h"
+#include "Components/TimelineComponent.h"
 #include "DemoBaseCharacter.generated.h"
 
 USTRUCT(BlueprintType)
@@ -119,7 +120,18 @@ public:
 	 */
 	virtual void SetCharacterMaxWalkSpeed(float MaxWalkSpeed);
 
+	/**
+	 * @brief 获取角色信息
+	 * @return 
+	 */
 	FCharacterInfo GetCharacterInfo();
+
+	/**
+	 * @brief 发起普通攻击
+	 */
+	virtual void CommAttack();
+
+	virtual void DelayDestroy();
 
 protected:
 	/**
@@ -127,13 +139,19 @@ protected:
 	 */
 	FTimerHandle DelayDestroyTimerHandle;
 
+	/**
+	 * @brief MP回复计时器
+	 */
 	FTimerHandle RecoverMpTimerHandle;
+
+	/**
+	 * @brief 冲刺时间轴
+	 */
+	FTimeline DashTimeLine;
 	
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void Destroyed() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -156,23 +174,31 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere,Category="Init|Info",meta=(DisplayPriority = 0))
 	FCharacterInfo CharacterInfo;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
+	float DefaultWalkSpeed = 500.f;
 	/**
 	 * @brief 死亡后延迟销毁时间
 	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
 	float DestroyDelay = 2.5f;
 
 	/**
 	 * @brief MP恢复速率
 	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
 	float MpAutoRecoverRate = 1.f;
 
 	/**
 	 * @brief 死亡后能提供的经验值
 	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
 	int32 ExpValue = 2;
+
+	/**
+	 * @brief 加速冲刺曲线
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
+	UCurveFloat* DashCurve;
 
 	/**
 	 * @brief 发射物类型
@@ -223,11 +249,6 @@ protected:
 	void AutoRecoverMp();
 	
 	/**
-	 * @brief 发起普通攻击
-	 */
-	virtual void CommAttack();
-
-	/**
 	 * @brief 魔法攻击生成
 	 * @param BallCount 
 	 * @param LocationEnd 
@@ -260,4 +281,22 @@ protected:
 	 */
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	                         AActor* DamageCauser) override;
+
+
+	/**
+	 * @brief 加速冲刺
+	 * @param DurationTime 加速时长 
+	 * @param DashRate 加速倍率
+	 */
+	virtual void TriggerTimeDash(const float DurationTime,const float DashRate = 2.0f);
+
+	UFUNCTION()
+	void OnDashTick();
+
+	UFUNCTION()
+	void OnDashFinished();
+
+private:
+	UFUNCTION()
+	void ExecuteDelayDestroy();
 };

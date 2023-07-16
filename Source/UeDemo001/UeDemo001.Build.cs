@@ -12,7 +12,7 @@ public class UeDemo001 : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"UMG","Slate","SlateCore",
-			"AIModule",
+			"AIModule","AISupportModule",
 			"GameplayTasks",
 			"NavigationSystem"
 		});

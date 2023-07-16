@@ -32,11 +32,6 @@ ADemoDefaultPlayer::ADemoDefaultPlayer()
 	PostProcess->AttachToComponent(CameraArm,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-void ADemoDefaultPlayer::AttackFireBall()
-{
-	Super::AttackFireBall();
-}
-
 void ADemoDefaultPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -120,13 +115,12 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	SetCharacterMaxWalkSpeed(bIsRunning ? 800.f : 500.f);
+	SetCharacterMaxWalkSpeed(bIsRunning ? DefaultWalkSpeed * 1.5f : DefaultWalkSpeed);
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	CommAttack();
-
 }
 
 void ADemoDefaultPlayer::MagicAttackForEnhancedInput(const FInputActionValue& InputActionValue)

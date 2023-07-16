@@ -13,7 +13,6 @@ ADemoDefaultEnemy::ADemoDefaultEnemy()
 
 void ADemoDefaultEnemy::BeginPlay()
 {
+	DefaultWalkSpeed = 300.f;
 	Super::BeginPlay();
-
-	SetCharacterMaxWalkSpeed(300.f);
 }

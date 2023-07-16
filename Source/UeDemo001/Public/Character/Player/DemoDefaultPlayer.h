@@ -21,10 +21,6 @@ class UEDEMO001_API ADemoDefaultPlayer : public ADemoBaseCharacter
 
 	ADemoDefaultPlayer();
 
-public:
-
-	virtual void AttackFireBall() override;
-	
 protected:
 	
 	FTimeline TimeLine;

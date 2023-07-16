@@ -81,7 +81,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 									FVector(this->GetActorLocation().X,this->GetActorLocation().Y,0),
 									FVector(this->GetActorLocation().X,this->GetActorLocation().Y,0),
 									500.f, {EObjectTypeQuery::ObjectTypeQuery3}, false, {this->GetOwner()},
-									EDrawDebugTrace::Persistent, *OutHits, true,FLinearColor::Red,
+									EDrawDebugTrace::None, *OutHits, true,FLinearColor::Red,
 									FLinearColor::Green, 5.f);
 		// 生成爆炸伤害
 		if (bHasBoomDamaged && !OutHits->IsEmpty()) 
