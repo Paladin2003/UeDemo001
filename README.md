@@ -9,7 +9,7 @@ Unreal Demo001
 
 
 
-UE C++中时间轴的绑定方法：
+一、UE C++中时间轴的绑定方法：
 
 1.定义时间轴
   	
@@ -92,3 +92,27 @@ UE C++中时间轴的绑定方法：
 		}
  	}
  
+二、绑定延时、定时任务
+	
+ 	1.定义定时器
+
+		FTimerHandle TimerHandle;
+  
+	2.绑定定时器
+
+     		void ADemoBaseCharacter::BeginPlay()
+		{
+			Super::BeginPlay();
+   			//最后参数表示是否循环，false 即延迟效果;ture 循环效果
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&AMyActor::TimerAutoFunc,1.f,true);
+		}
+  
+  	3.定义任务执行方法
+   
+		UFUNCTION()
+		void TimerAutoFunc();
+  
+  	4.在适当的时机清除任务
+
+   		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+      	
