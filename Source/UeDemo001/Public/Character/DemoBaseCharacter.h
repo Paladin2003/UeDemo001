@@ -8,60 +8,61 @@
 #include "GameFramework/Actor.h"
 #include "Widget/DamageTipWidget.h"
 #include "Components/TimelineComponent.h"
+#include "Struct/CharacterInfo.h"
 #include "DemoBaseCharacter.generated.h"
 
-USTRUCT(BlueprintType)
+/*USTRUCT(BlueprintType)
 struct FCharacterInfo
 {
 	GENERATED_USTRUCT_BODY()
 	/**
 	 * @brief 角色名称
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	FString Name = "Character01";
 
 	/**
 	 * @brief 角色等级
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 1,UIMin = 1,UIMax = 99))
 	int32 Level = 1;
 
 	/**
 	 * @brief 当前经验值
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 CurExp = 0;
 
 	/**
 	 * @brief 最大经验值
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 MaxExp = 20;
 
 	/**
 	 * @brief 当前血量
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 CurHp = 10;
 
 	/**
 	 * @brief 最大血量
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 MaxHp = 10;
 
 	/**
 	 * @brief 当前魔法值
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 CurMp = 10;
 
 	/**
 	 * @brief 最大魔法值
-	 */
+	 #1#
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
 	int32 MaxMp = 10;
-};
+};*/
 
 UCLASS()
 class UEDEMO001_API ADemoBaseCharacter : public ACharacter

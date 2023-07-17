@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Init|AI",meta=(DisplayPriority = 7))
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Init|Data",meta=(DisplayPriority = 1))
+	UDataTable* EnemyData;
+
 protected:
 	virtual void BeginPlay() override;
 };
