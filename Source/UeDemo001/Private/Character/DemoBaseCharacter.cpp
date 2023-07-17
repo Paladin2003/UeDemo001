@@ -37,12 +37,16 @@ ADemoBaseCharacter::ADemoBaseCharacter()
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,"Weapon");
 }
 
+void ADemoBaseCharacter::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+}
+
 // Called when the game starts or when spawned
 void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	SetCharacterMaxWalkSpeed(DefaultWalkSpeed);
-	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,MpAutoRecoverRate,true);
+	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,CharacterInfo.MpAutoRecoverRate,true);
 
 	FOnTimelineFloatStatic OnDashTimeLineTick;
 	FOnTimelineEventStatic OnDashTimeLineFinished;
@@ -60,7 +64,17 @@ void ADemoBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	DashTimeLine.TickTimeline(DeltaTime);
-	
+}
+
+void ADemoBaseCharacter::InitCharacterInfo()
+{
+	this->Weapon->SetVisibility(CharacterInfo.bFarAttack);
+	this->SetActorRelativeScale3D(FVector(CharacterInfo.ScaleRate));
+	SetCharacterMaxWalkSpeed(CharacterInfo.WalkSpeed);
+	if(CharacterInfo.Skin)
+	{
+		this->GetMesh()->SetMaterial(0,CharacterInfo.Skin);	
+	}
 }
 
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -112,7 +126,7 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 		// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
 		// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
-		DamageCauserCharacter->CalculateExp(this->ExpValue);
+		DamageCauserCharacter->CalculateExp(this->CharacterInfo.DieExp);
 		
 		//设置延迟销毁
 		DelayDestroy();
@@ -148,7 +162,7 @@ void ADemoBaseCharacter::OnDashTick()
 {
 	float DushRate = DashCurve->GetFloatValue(DashTimeLine.GetPlaybackPosition());
 	// UE_LOG(LogTemp,Warning,TEXT("获取到冲刺的倍率：%f"),DushRate);
-	SetCharacterMaxWalkSpeed(DefaultWalkSpeed * DushRate);
+	SetCharacterMaxWalkSpeed(CharacterInfo.WalkSpeed * DushRate);
 }
 
 void ADemoBaseCharacter::OnDashFinished()
@@ -234,26 +248,25 @@ void ADemoBaseCharacter::AttackFireBall()
 	SpawnTransform.SetLocation(SpawnTransform.GetLocation() +  GetActorForwardVector() * 100);
 	ADemoBaseMissle* NewMissile = Cast<ADemoBaseMissle>(
 		UGameplayStatics::BeginDeferredActorSpawnFromClass(
-			this,MissileClass,SpawnTransform,ESpawnActorCollisionHandlingMethod::AlwaysSpawn,this));
+			this,CharacterInfo.MissileClass,SpawnTransform,ESpawnActorCollisionHandlingMethod::AlwaysSpawn,this));
 	UGameplayStatics::FinishSpawningActor(NewMissile,SpawnTransform);
 }
 
 void ADemoBaseCharacter::CommAttack()
 {
-	UE_LOG(LogTemp,Warning,TEXT("开始普通攻击。。。。"));
+	UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 001"));
 	if(!bAttacking && !bSustainedAttacking)	{
+		UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 002"));
 		bAttacking = true;
-		UE_LOG(LogTemp,Warning,TEXT("开始定位攻击方向。。。。"));
-		this->RotateBeforeAttack();
-		UE_LOG(LogTemp,Warning,TEXT("开始播放攻击动画。。。。"));
-		PlayAnimMontage(AttackAnimMontage,1.25f);
-		UE_LOG(LogTemp,Warning,TEXT("开始播放动画完成。。。。"));
+		// this->RotateBeforeAttack();
+		UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 003"));
+		PlayAnimMontage(CharacterInfo.AttackAnimMontage,CharacterInfo.AttackAnimMontageRate);
 	}
 }
 
 void ADemoBaseCharacter::DelayDestroy()
 {
-	GetWorldTimerManager().SetTimer(DelayDestroyTimerHandle,this,&ADemoBaseCharacter::ExecuteDelayDestroy,DestroyDelay,false);
+	GetWorldTimerManager().SetTimer(DelayDestroyTimerHandle,this,&ADemoBaseCharacter::ExecuteDelayDestroy,CharacterInfo.DestroyDelay,false);
 }
 
 void ADemoBaseCharacter::MagicAttack()
@@ -287,16 +300,16 @@ void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVecto
 		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,100.f),
 			UKismetMathLibrary::RandomFloatInRange(0.f,100.f),0);
 		const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(StartLocation,RandomTargetLocation);
-		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(MissileClass,StartLocation ,Rotator);
+		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(CharacterInfo.MissileClass,StartLocation ,Rotator);
 		Missile->SetOwner(this);
 	}
 }
 
 void ADemoBaseCharacter::AutoRecoverMp()
 {
-	if(CharacterInfo.CurMp <= CharacterInfo.MaxMp -1)
+	if(CharacterInfo.CurMp <= CharacterInfo.MaxMp - CharacterInfo.MpAutoRecoverPoint)
 	{
-		this->CharacterInfo.CurMp +=1;	
+		this->CharacterInfo.CurMp += CharacterInfo.MpAutoRecoverPoint;	
 	}
 }
 

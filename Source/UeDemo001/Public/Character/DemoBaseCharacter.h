@@ -4,65 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Missile/DemoBaseMissle.h"
 #include "GameFramework/Actor.h"
 #include "Widget/DamageTipWidget.h"
 #include "Components/TimelineComponent.h"
 #include "Struct/CharacterInfo.h"
 #include "DemoBaseCharacter.generated.h"
-
-/*USTRUCT(BlueprintType)
-struct FCharacterInfo
-{
-	GENERATED_USTRUCT_BODY()
-	/**
-	 * @brief 角色名称
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	FString Name = "Character01";
-
-	/**
-	 * @brief 角色等级
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 1,UIMin = 1,UIMax = 99))
-	int32 Level = 1;
-
-	/**
-	 * @brief 当前经验值
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 CurExp = 0;
-
-	/**
-	 * @brief 最大经验值
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 MaxExp = 20;
-
-	/**
-	 * @brief 当前血量
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 CurHp = 10;
-
-	/**
-	 * @brief 最大血量
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 MaxHp = 10;
-
-	/**
-	 * @brief 当前魔法值
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 CurMp = 10;
-
-	/**
-	 * @brief 最大魔法值
-	 #1#
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0,UIMin = 0))
-	int32 MaxMp = 10;
-};*/
 
 UCLASS()
 class UEDEMO001_API ADemoBaseCharacter : public ACharacter
@@ -71,7 +17,7 @@ class UEDEMO001_API ADemoBaseCharacter : public ACharacter
 
 public:
 	ADemoBaseCharacter();
-	
+
 	/**
 	 * @brief 持续攻击中
 	 */
@@ -122,17 +68,17 @@ public:
 	virtual void SetCharacterMaxWalkSpeed(float MaxWalkSpeed);
 
 	/**
-	 * @brief 获取角色信息
-	 * @return 
-	 */
-	FCharacterInfo GetCharacterInfo();
-
-	/**
 	 * @brief 发起普通攻击
 	 */
 	virtual void CommAttack();
 
 	virtual void DelayDestroy();
+
+	/**
+	 * @brief 获取角色信息
+	 * @return 
+	 */
+	FCharacterInfo GetCharacterInfo();
 
 protected:
 	/**
@@ -150,10 +96,14 @@ protected:
 	 */
 	FTimeline DashTimeLine;
 	
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void InitCharacterInfo();
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/**
@@ -175,37 +125,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere,Category="Init|Info",meta=(DisplayPriority = 0))
 	FCharacterInfo CharacterInfo;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param",meta=(DisplayPriority = 2))
-	float DefaultWalkSpeed = 500.f;
-	/**
-	 * @brief 死亡后延迟销毁时间
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
-	float DestroyDelay = 2.5f;
-
-	/**
-	 * @brief MP恢复速率
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
-	float MpAutoRecoverRate = 1.f;
-
-	/**
-	 * @brief 死亡后能提供的经验值
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
-	int32 ExpValue = 2;
-
 	/**
 	 * @brief 加速冲刺曲线
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
 	UCurveFloat* DashCurve;
-
-	/**
-	 * @brief 发射物类型
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|Damage",meta=(DisplayPriority = 3))
-	TSubclassOf<class ADemoBaseMissle> MissileClass;
 
 	/**
 	 * @brief 伤害显示UI

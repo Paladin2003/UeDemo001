@@ -24,6 +24,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Init|Data",meta=(DisplayPriority = 1))
 	UDataTable* EnemyData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Generate")
+	FString EnemyName = "Enemy001";
+
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 };

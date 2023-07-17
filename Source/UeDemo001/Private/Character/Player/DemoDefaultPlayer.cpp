@@ -115,7 +115,7 @@ void ADemoDefaultPlayer::MovementForEnhancedInput(const FInputActionValue& Input
 void ADemoDefaultPlayer::RunningForEnhancedInput(const FInputActionValue& InputActionValue)
 {
 	bIsRunning = InputActionValue.Get<bool>();
-	SetCharacterMaxWalkSpeed(bIsRunning ? DefaultWalkSpeed * 1.5f : DefaultWalkSpeed);
+	SetCharacterMaxWalkSpeed(bIsRunning ? CharacterInfo.WalkSpeed * 1.5f : CharacterInfo.WalkSpeed);
 }
 
 void ADemoDefaultPlayer::AttackForEnhancedInput(const FInputActionValue& InputActionValue)
