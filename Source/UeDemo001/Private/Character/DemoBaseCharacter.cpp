@@ -88,12 +88,8 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		return 0.f;
 	}
 
-	//设置黑板值
-	if (UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this))
-	{
-		BlackboardComponent->SetValueAsObject("Player",DamageCauser);
-		TriggerTimeDash(0,0);
-	}
+	//被击中后短暂冲刺
+	TriggerTimeDash(0,0);
 
 	//设置被击状态
 	bIsHit = true;

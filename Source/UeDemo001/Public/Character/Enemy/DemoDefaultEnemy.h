@@ -28,7 +28,14 @@ public:
 	FString EnemyName = "Enemy001";
 
 protected:
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	class UAIPerceptionComponent* PerceptionComponent;
+
 	virtual void BeginPlay() override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };
