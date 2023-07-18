@@ -15,6 +15,9 @@ ADemoDefaultEnemy::ADemoDefaultEnemy()
 
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
 	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &ADemoDefaultEnemy::OnPerceptionUpdated);
+	PerceptionComponent->OnTargetPerceptionForgotten.AddDynamic(this,&ADemoDefaultEnemy::OnTargetPerceptionForgotten);
+
+	PerceptionComponent->OnTargetPerceptionInfoUpdated.AddDynamic(this,&ADemoDefaultEnemy::OnTargetPerceptionInfoUpdated);
 }
 
 void ADemoDefaultEnemy::BeginPlay()
@@ -58,5 +61,23 @@ void ADemoDefaultEnemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 			BlackboardComponent->SetValueAsObject("Player",DefaultPlayer);
 			break;
 		}
+	}
+}
+
+void ADemoDefaultEnemy::OnTargetPerceptionForgotten(AActor* Actor)
+{
+	UE_LOG(LogTemp,Warning,TEXT("%s已超出%s的感知范围。。。"),*FName(Actor->GetName()).ToString(),*FName(this->GetName()).ToString());
+	//设置黑板值
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
+	BlackboardComponent->ClearValue("Player");
+}
+
+void ADemoDefaultEnemy::OnTargetPerceptionInfoUpdated(const FActorPerceptionUpdateInfo& UpdateInfo)
+{
+	UE_LOG(LogTemp,Warning,TEXT("OnTargetPerceptionInfoUpdated。。。"));
+
+	if(ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(UpdateInfo.Target) && UpdateInfo.Stimulus.)
+	{
+		
 	}
 }
