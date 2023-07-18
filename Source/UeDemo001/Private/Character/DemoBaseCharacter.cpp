@@ -98,11 +98,15 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	//设置被击状态
 	bIsHit = true;
 
+	float Damage = 0.f;
 	//计算伤害
-	// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
-	const float Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	this->CharacterInfo.CurHp  = CharacterInfo.CurHp - Damage <= 0 ? 0 : CharacterInfo.CurHp - Damage;
-
+	if(!bIsLockHp)
+	{
+		// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
+		Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+		this->CharacterInfo.CurHp  = CharacterInfo.CurHp - Damage <= 0 ? 0 : CharacterInfo.CurHp - Damage;
+	}
+	
 	//死亡判定
 	if(CharacterInfo.CurHp <= 0)
 	{
@@ -143,8 +147,8 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		TipWidget->AddToViewport(0);
 		FVector2D ScreenPosition ;
 		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
-		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(0,100.f);
-		ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(0,50.f);
+		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(-50,50.f);
+		ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(-25,25.f);
 		TipWidget->SetPositionInViewport(ScreenPosition);	
 	}
 	return Damage;

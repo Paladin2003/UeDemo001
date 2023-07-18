@@ -91,7 +91,7 @@ public:
 	/**
 	 * @brief 攻击范围
 	 */
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0.5,UIMin = 0.5,Units = "m"))
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ClampMin = 0.5,UIMin = 0.5,Units = "cm"))
 	float AttackRange = 1.f;
 
 	/**

@@ -68,6 +68,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 			DemoBaseCharacter->bIsDie)
 		{
 			//生成伤害
+			//UE_LOG(LogTemp,Warning,TEXT("子弹%s对%s造成直接伤害"),*this->GetName(),*Other->GetName());
 			UGameplayStatics::ApplyDamage(DemoBaseCharacter, Damage,
 				DemoBaseCharacter->GetController(),
 				this->GetOwner(), nullptr);
@@ -86,7 +87,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 		// 生成爆炸伤害
 		if (bHasBoomDamaged && !OutHits->IsEmpty()) 
 		{
-			// UE_LOG(LogTemp,Warning,TEXT("有%d名敌人被子弹%s产生的爆炸击中"),OutHits->Num(),*FName(this->GetName()).ToString());
+			 //UE_LOG(LogTemp,Warning,TEXT("有%d名敌人被子弹%s产生的爆炸击中"),OutHits->Num(),*FName(this->GetName()).ToString());
 			for(auto i = OutHits->begin();i != OutHits->end();++i)
 			{
 				const FHitResult HitResult = *i;

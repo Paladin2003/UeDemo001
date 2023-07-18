@@ -43,6 +43,9 @@ public:
 	 */
 	bool bIsHit;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bIsLockHp ;
+
 	/**
 	 * @brief 普通攻击结束后的通知
 	 */
