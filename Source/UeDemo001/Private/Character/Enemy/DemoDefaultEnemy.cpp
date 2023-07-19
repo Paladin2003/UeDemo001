@@ -49,13 +49,13 @@ void ADemoDefaultEnemy::OnConstruction(const FTransform& Transform)
 
 void ADemoDefaultEnemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s的AI感知到%d个单位"), *FName(this->GetName()).ToString(), UpdatedActors.Num());
+	// UE_LOG(LogTemp, Warning, TEXT("%s的AI感知到%d个单位"), *FName(this->GetName()).ToString(), UpdatedActors.Num());
 	for(AActor* Actor: UpdatedActors)
 	{
 		if( ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(Actor))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("%s感知到玩家类型对象：%s"),*FName(this->GetName()).ToString(),
-				*FName(DefaultPlayer->GetName()).ToString());
+			/*UE_LOG(LogTemp,Warning,TEXT("%s感知到玩家类型对象：%s"),*FName(this->GetName()).ToString(),
+				*FName(DefaultPlayer->GetName()).ToString());*/
 			//设置黑板值
 			UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
 			BlackboardComponent->SetValueAsObject("Player",DefaultPlayer);
@@ -66,18 +66,11 @@ void ADemoDefaultEnemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 
 void ADemoDefaultEnemy::OnTargetPerceptionForgotten(AActor* Actor)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%s已超出%s的感知范围。。。"),*FName(Actor->GetName()).ToString(),*FName(this->GetName()).ToString());
-	//设置黑板值
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
-	BlackboardComponent->ClearValue("Player");
+	// UE_LOG(LogTemp,Warning,TEXT("%s已超出%s的感知范围。。。"),*FName(Actor->GetName()).ToString(),*FName(this->GetName()).ToString());
+	
 }
 
 void ADemoDefaultEnemy::OnTargetPerceptionInfoUpdated(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	UE_LOG(LogTemp,Warning,TEXT("OnTargetPerceptionInfoUpdated。。。"));
-
-	if(ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(UpdateInfo.Target) && UpdateInfo.Stimulus.)
-	{
-		
-	}
+	// UE_LOG(LogTemp,Warning,TEXT("OnTargetPerceptionInfoUpdated。。。"));
 }

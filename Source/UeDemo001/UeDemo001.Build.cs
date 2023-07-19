@@ -14,7 +14,8 @@ public class UeDemo001 : ModuleRules
 			"UMG","Slate","SlateCore",
 			"AIModule","AISupportModule",
 			"GameplayTasks",
-			"NavigationSystem"
+			"NavigationSystem",
+			"Niagara","NiagaraCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

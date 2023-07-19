@@ -3,8 +3,6 @@
 
 #include "Character/DemoBaseCharacter.h"
 
-#include "BehaviorTree/BlackboardComponent.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
@@ -254,12 +252,12 @@ void ADemoBaseCharacter::AttackFireBall()
 
 void ADemoBaseCharacter::CommAttack()
 {
-	UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 001"));
+	// UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 001"));
 	if(!bAttacking && !bSustainedAttacking)	{
-		UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 002"));
+		// UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 002"));
 		bAttacking = true;
 		// this->RotateBeforeAttack();
-		UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 003"));
+		// UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 003"));
 		PlayAnimMontage(CharacterInfo.AttackAnimMontage,CharacterInfo.AttackAnimMontageRate);
 	}
 }
