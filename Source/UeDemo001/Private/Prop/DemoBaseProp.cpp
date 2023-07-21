@@ -34,7 +34,6 @@ void ADemoBaseProp::DoPropEffect(ADemoBaseCharacter* Character)
 
 FCharacterState ADemoBaseProp::GetPropState()
 {
-	
 	return FCharacterState(this->PropInfo.RecoverHp,this->PropInfo.RecoverMp);
 }
 
@@ -71,6 +70,7 @@ void ADemoBaseProp::OnBeginComponentOverlapped(UPrimitiveComponent* OverlappedCo
 	if(ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(OtherActor))
 	{
 		UE_LOG(LogTemp,Warning,TEXT("%s拾取了道具：%s") , *FName(DefaultPlayer->GetName()).ToString(),*this->GetName());
+		//计算道具效果
 		DoPropEffect(DefaultPlayer);
 		this->Destroy();
 	}

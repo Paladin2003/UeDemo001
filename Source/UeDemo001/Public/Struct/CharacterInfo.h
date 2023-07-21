@@ -64,6 +64,12 @@ public:
 	float DestroyDelay = 2.5f;
 
 	/**
+	 * @brief 道具掉落率
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere,meta=(ClampMin = 0.f,UIMin = 0.f,ClampMax = 1.f,UIMax = 1.f))
+	float DropPropRate;
+
+	/**
 	 * @brief 发射物类型
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere,meta=(DisplayThumbnail))
@@ -87,4 +93,11 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)	
 	UMaterialInstance* Skin;
 
+	/**
+	 * @brief 掉落物类型
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	TSubclassOf<class ADemoBaseProp> DropPropClass; 
+
+	
 };

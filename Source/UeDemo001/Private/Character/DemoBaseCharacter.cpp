@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Widget/DamageTipWidget.h"
 #include "kismet/KismetMathLibrary.h"
+#include "Prop/DemoBaseProp.h"
 
 // Sets default values
 ADemoBaseCharacter::ADemoBaseCharacter()
@@ -125,7 +126,16 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
 		// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
 		DamageCauserCharacter->CalculateExp(this->CharacterInfo.DieExp);
-		
+
+		//生成掉落物
+		// GetWorld()->SpawnActor(ADemoBaseProp::StaticClass(),this->GetActorLocation());
+		float RandomDropRate = UKismetMathLibrary::RandomFloatInRange(0,1);
+		UE_LOG(LogTemp,Warning,TEXT("物品掉落率：%f，随机掉落率：%f"),this->CharacterInfo.DropPropRate,RandomDropRate);
+		if(RandomDropRate >= 1.f - this->CharacterInfo.DropPropRate)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("生成掉落物中。。。"))
+			ADemoBaseProp* DropProp = this->GetWorld()->SpawnActor<ADemoBaseProp>(this->CharacterInfo.DropPropClass,this->GetActorTransform());
+		}
 		//设置延迟销毁
 		DelayDestroy();
 	}else
@@ -303,8 +313,10 @@ void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVecto
 		FVector RandomTargetLocation = TargetLocation + FVector(UKismetMathLibrary::RandomFloatInRange(0.f,100.f),
 			UKismetMathLibrary::RandomFloatInRange(0.f,100.f),0);
 		const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(StartLocation,RandomTargetLocation);
-		ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(CharacterInfo.MissileClass,StartLocation ,Rotator);
-		Missile->SetOwner(this);
+		if (ADemoBaseMissle* Missile = GetWorld()->SpawnActor<ADemoBaseMissle>(CharacterInfo.MissileClass,StartLocation ,Rotator))
+		{
+			Missile->SetOwner(this);	
+		}
 	}
 }
 
