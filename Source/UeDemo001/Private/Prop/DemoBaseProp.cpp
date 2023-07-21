@@ -2,6 +2,8 @@
 
 
 #include "Prop/DemoBaseProp.h"
+
+#include "Character/Player/DemoDefaultPlayer.h"
 #include "Components/SphereComponent.h"
 
 // Sets default values
@@ -27,7 +29,13 @@ void ADemoBaseProp::BeginPlay()
 
 void ADemoBaseProp::DoPropEffect(ADemoBaseCharacter* Character)
 {
+	Character->AddState(GetPropState());
+}
+
+FCharacterState ADemoBaseProp::GetPropState()
+{
 	
+	return FCharacterState(this->PropInfo.RecoverHp,this->PropInfo.RecoverMp);
 }
 
 void ADemoBaseProp::OnConstruction(const FTransform& Transform)
@@ -60,9 +68,11 @@ void ADemoBaseProp::OnBeginComponentOverlapped(UPrimitiveComponent* OverlappedCo
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp,Warning,TEXT("道具重叠事件开始。。。。。"));
-	if(ADemoBaseCharacter* Character = Cast<ADemoBaseCharacter>(OtherActor))
+	if(ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(OtherActor))
 	{
-		DoPropEffect(Character);	
+		UE_LOG(LogTemp,Warning,TEXT("%s拾取了道具：%s") , *FName(DefaultPlayer->GetName()).ToString(),*this->GetName());
+		DoPropEffect(DefaultPlayer);
+		this->Destroy();
 	}
 }
 

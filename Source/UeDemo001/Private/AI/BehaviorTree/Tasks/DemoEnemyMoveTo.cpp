@@ -18,7 +18,7 @@ EBTNodeResult::Type UDemoEnemyMoveTo::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			return EBTNodeResult::Failed;
 		}
 		
-		this->AcceptableRadius = DefaultEnemy->GetCharacterInfo().AttackRange;	
+		this->AcceptableRadius = DefaultEnemy->GetCharacterInfo().State.AttackRange;	
 	}
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }

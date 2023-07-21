@@ -44,7 +44,7 @@ void ADemoBaseCharacter::OnConstruction(const FTransform& Transform)
 void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,CharacterInfo.MpAutoRecoverRate,true);
+	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,CharacterInfo.State.MpAutoRecoverRate,true);
 
 	FOnTimelineFloatStatic OnDashTimeLineTick;
 	FOnTimelineEventStatic OnDashTimeLineFinished;
@@ -68,7 +68,7 @@ void ADemoBaseCharacter::InitCharacterInfo()
 {
 	this->Weapon->SetVisibility(CharacterInfo.bFarAttack);
 	this->SetActorRelativeScale3D(FVector(CharacterInfo.ScaleRate));
-	SetCharacterMaxWalkSpeed(CharacterInfo.WalkSpeed);
+	SetCharacterMaxWalkSpeed(CharacterInfo.State.WalkSpeed);
 	if(CharacterInfo.Skin)
 	{
 		this->GetMesh()->SetMaterial(0,CharacterInfo.Skin);	
@@ -98,11 +98,11 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		// UE_LOG(LogTemp,Warning,TEXT("%s==被攻击----"),*FName(this->GetName()).ToString());
 		Damage =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-		this->CharacterInfo.CurHp  = CharacterInfo.CurHp - Damage <= 0 ? 0 : CharacterInfo.CurHp - Damage;
+		this->CharacterInfo.State.CurHp  = CharacterInfo.State.CurHp - Damage <= 0 ? 0 : CharacterInfo.State.CurHp - Damage;
 	}
 	
 	//死亡判定
-	if(CharacterInfo.CurHp <= 0)
+	if(CharacterInfo.State.CurHp <= 0)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("%s==已死亡----"),*FName(this->GetName()).ToString());
 		//设定死亡
@@ -160,7 +160,7 @@ void ADemoBaseCharacter::OnDashTick()
 {
 	float DushRate = DashCurve->GetFloatValue(DashTimeLine.GetPlaybackPosition());
 	// UE_LOG(LogTemp,Warning,TEXT("获取到冲刺的倍率：%f"),DushRate);
-	SetCharacterMaxWalkSpeed(CharacterInfo.WalkSpeed * DushRate);
+	SetCharacterMaxWalkSpeed(CharacterInfo.State.WalkSpeed * DushRate);
 }
 
 void ADemoBaseCharacter::OnDashFinished()
@@ -215,8 +215,8 @@ int32 ADemoBaseCharacter::LevelUp(const int32 LastLevelOverExp)
 	this->CharacterInfo.CurExp = LastLevelOverExp;
 
 	//状态恢复
-	this->CharacterInfo.CurHp = CharacterInfo.MaxHp;
-	this->CharacterInfo.CurMp = CharacterInfo.MaxMp;
+	this->CharacterInfo.State.CurHp = CharacterInfo.State.MaxHp;
+	this->CharacterInfo.State.CurMp = CharacterInfo.State.MaxMp;
 	return  this->CharacterInfo.Level;
 }
 
@@ -228,6 +228,11 @@ void ADemoBaseCharacter::SetCharacterMaxWalkSpeed(float MaxWalkSpeed)
 FCharacterInfo ADemoBaseCharacter::GetCharacterInfo()
 {
 	return this->CharacterInfo;
+}
+
+void ADemoBaseCharacter::AddState(const FCharacterState& InState)
+{
+	this->CharacterInfo.State += InState;
 }
 
 void ADemoBaseCharacter::AttackEndNotify()
@@ -271,12 +276,12 @@ void ADemoBaseCharacter::MagicAttack()
 {
 	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(MagicAttackAnimMontage))
 	{
-		if(CharacterInfo.CurMp <= 1)
+		if(CharacterInfo.State.CurMp <= 1)
 		{
 			return;
 		}
 		bSustainedAttacking = true;
-		CharacterInfo.CurMp -= 1;
+		CharacterInfo.State.CurMp -= 1;
 		PlayAnimMontage(MagicAttackAnimMontage,0.8f);
 		this->CreateMagicFireBall(1,GetAttackPointByMouse());
 	}
@@ -305,9 +310,9 @@ void ADemoBaseCharacter::CreateMagicFireBall(const int32 BallCount, const FVecto
 
 void ADemoBaseCharacter::AutoRecoverMp()
 {
-	if(CharacterInfo.CurMp <= CharacterInfo.MaxMp - CharacterInfo.MpAutoRecoverPoint)
+	if(CharacterInfo.State.CurMp <= CharacterInfo.State.MaxMp - CharacterInfo.State.MpAutoRecoverPoint)
 	{
-		this->CharacterInfo.CurMp += CharacterInfo.MpAutoRecoverPoint;	
+		this->CharacterInfo.State.CurMp += CharacterInfo.State.MpAutoRecoverPoint;	
 	}
 }
 

@@ -23,4 +23,16 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UNiagaraSystem* NiagaraSystem;
+
+	/**
+	 * @brief 恢复HP量
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	int32 RecoverHp;
+
+	/**
+	 * @brief 恢复Mp量
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	int32 RecoverMp;
 };

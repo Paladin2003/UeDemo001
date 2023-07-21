@@ -31,12 +31,12 @@ FText UDemoCharacterHudWidget::GetLevel() const
 
 float UDemoCharacterHudWidget::GetHpRate() const
 {
-	return  Player->GetCharacterInfo().CurHp * (1.0f) / Player->GetCharacterInfo().MaxHp;
+	return  Player->GetCharacterInfo().State.CurHp * (1.0f) / Player->GetCharacterInfo().State.MaxHp;
 }
 
 float UDemoCharacterHudWidget::GetMpRate() const
 {
-	return  Player->GetCharacterInfo().CurMp * (1.0f) / Player->GetCharacterInfo().MaxMp;
+	return  Player->GetCharacterInfo().State.CurMp * (1.0f) / Player->GetCharacterInfo().State.MaxMp;
 }
 
 float UDemoCharacterHudWidget::GetExpRate() const

@@ -30,13 +30,16 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UDataTable* PropData;
-	
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FPropInfo PropInfo;
 
 	/**
 	* @brief 执行道具效果
 	*/
 	virtual void DoPropEffect(ADemoBaseCharacter* Character);
+
+	virtual FCharacterState GetPropState();
 
 	//====================
 	virtual void OnConstruction(const FTransform& Transform) override;

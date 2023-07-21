@@ -83,6 +83,7 @@ public:
 	 */
 	FCharacterInfo GetCharacterInfo();
 
+	void AddState(const FCharacterState& InState);
 protected:
 	/**
 	 * @brief 延迟销毁的计时器
