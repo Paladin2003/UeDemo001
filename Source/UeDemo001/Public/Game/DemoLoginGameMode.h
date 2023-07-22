@@ -4,18 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "DemoDefaultGameMode.generated.h"
+#include "DemoLoginGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UEDEMO001_API ADemoDefaultGameMode : public AGameModeBase
+class UEDEMO001_API ADemoLoginGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	ADemoDefaultGameMode();
-
-	
+	ADemoLoginGameMode();
 };
