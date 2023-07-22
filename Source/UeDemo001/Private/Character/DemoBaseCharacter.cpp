@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
 #include "Blueprint/UserWidget.h"
+#include "Character/Enemy/DemoDefaultEnemy.h"
+#include "Character/Player/DemoDefaultPlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "Widget/DamageTipWidget.h"
 #include "kismet/KismetMathLibrary.h"
@@ -76,6 +78,61 @@ void ADemoBaseCharacter::InitCharacterInfo()
 	}
 }
 
+void ADemoBaseCharacter::GetHit(float Damage)
+{
+	//播放被攻击动画 
+	PlayAnimMontage(HitAnimMontage,1.f);
+
+	//显示伤害
+	UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
+		
+	TipWidget->DamageValue = Damage;
+	// UE_LOG(LogTemp,Warning,TEXT("造成了%d点伤害"),TipWidget->DamageValue);
+	TipWidget->AddToViewport(0);
+	FVector2D ScreenPosition ;
+	UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
+	ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(-50,50.f);
+	ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(-25,25.f);
+	TipWidget->SetPositionInViewport(ScreenPosition);
+}
+
+void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s==已死亡----"), *FName(this->GetName()).ToString());
+	//设定死亡
+	this->bIsDie = true;
+
+	//受到伤害停止移动
+	GetMovementComponent()->StopActiveMovement();
+
+	//清除奔跑状态
+	this->bIsRunning = false;
+	//清除普通攻击状态
+	this->bAttacking = false;
+	//清除持续攻击状态
+	this->bSustainedAttacking = false;
+	//清除被击状态
+	this->bIsHit = false;
+	//设置死亡后不再生成重叠事件
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+
+	// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
+	// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
+	DamageCauserCharacter->CalculateExp(this->CharacterInfo.DieExp);
+
+	//生成掉落物
+	// GetWorld()->SpawnActor(ADemoBaseProp::StaticClass(),this->GetActorLocation());
+	float RandomDropRate = UKismetMathLibrary::RandomFloatInRange(0,1);
+	UE_LOG(LogTemp,Warning,TEXT("物品掉落率：%f，随机掉落率：%f"),this->CharacterInfo.DropPropRate,RandomDropRate);
+	if(RandomDropRate >= 1.f - this->CharacterInfo.DropPropRate)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("生成掉落物中。。。"))
+		ADemoBaseProp* DropProp = this->GetWorld()->SpawnActor<ADemoBaseProp>(this->CharacterInfo.DropPropClass,this->GetActorTransform());
+	}
+	//设置延迟销毁
+	DelayDestroy();
+}
+
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                      AActor* DamageCauser)
 {
@@ -86,12 +143,18 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		// UE_LOG(LogTemp,Warning,TEXT("未获取到伤害来源。。。。"));
 		return 0.f;
 	}
-
-	//被击中后短暂冲刺
-	TriggerTimeDash(0,0);
-
 	//设置被击状态
 	bIsHit = true;
+
+	if(ADemoDefaultEnemy* Enemy = Cast<ADemoDefaultEnemy>(this))
+	{
+		//旋转对其玩家
+		RotateBeforeAttack(DamageCauserCharacter->GetActorLocation());
+		//敌方被击中后短暂冲刺
+        TriggerTimeDash(0,0);	
+	}
+	
+
 
 	float Damage = 0.f;
 	//计算伤害
@@ -105,55 +168,10 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	//死亡判定
 	if(CharacterInfo.State.CurHp <= 0)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("%s==已死亡----"),*FName(this->GetName()).ToString());
-		//设定死亡
-		this->bIsDie = true;
-
-		//受到伤害停止移动
-		GetMovementComponent()->StopActiveMovement();
-
-		//清除奔跑状态
-		this->bIsRunning = false;
-		//清除普通攻击状态
-		this->bAttacking = false;
-		//清除持续攻击状态
-		this->bSustainedAttacking = false;
-		//清除被击状态
-		this->bIsHit = false;
-		//设置死亡后不再生成重叠事件
-		GetCapsuleComponent()->SetGenerateOverlapEvents(false);
-
-		// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
-		// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
-		DamageCauserCharacter->CalculateExp(this->CharacterInfo.DieExp);
-
-		//生成掉落物
-		// GetWorld()->SpawnActor(ADemoBaseProp::StaticClass(),this->GetActorLocation());
-		float RandomDropRate = UKismetMathLibrary::RandomFloatInRange(0,1);
-		UE_LOG(LogTemp,Warning,TEXT("物品掉落率：%f，随机掉落率：%f"),this->CharacterInfo.DropPropRate,RandomDropRate);
-		if(RandomDropRate >= 1.f - this->CharacterInfo.DropPropRate)
-		{
-			UE_LOG(LogTemp,Warning,TEXT("生成掉落物中。。。"))
-			ADemoBaseProp* DropProp = this->GetWorld()->SpawnActor<ADemoBaseProp>(this->CharacterInfo.DropPropClass,this->GetActorTransform());
-		}
-		//设置延迟销毁
-		DelayDestroy();
+		CharacterDied(DamageCauserCharacter);
 	}else
 	{
-		//播放被攻击动画 
-		PlayAnimMontage(HitAnimMontage,1.f);
-
-		//显示伤害
-		UDamageTipWidget* TipWidget = CreateWidget<UDamageTipWidget>(GetWorld(),DamageTipWidget);
-		
-		TipWidget->DamageValue = Damage;
-		// UE_LOG(LogTemp,Warning,TEXT("造成了%d点伤害"),TipWidget->DamageValue);
-		TipWidget->AddToViewport(0);
-		FVector2D ScreenPosition ;
-		UGameplayStatics::ProjectWorldToScreen(GetWorld()->GetFirstPlayerController(),GetActorLocation(),ScreenPosition);
-		ScreenPosition.X += UKismetMathLibrary::RandomFloatInRange(-50,50.f);
-		ScreenPosition.Y += UKismetMathLibrary::RandomFloatInRange(-25,25.f);
-		TipWidget->SetPositionInViewport(ScreenPosition);	
+		GetHit(Damage);	
 	}
 	return Damage;
 }
@@ -185,9 +203,9 @@ void ADemoBaseCharacter::ExecuteDelayDestroy()
 	this->Destroy();
 }
 
-void ADemoBaseCharacter::RotateBeforeAttack()
+void ADemoBaseCharacter::RotateBeforeAttack(const FVector& Target)
 {
-	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetAttackPointByMouse());
+	const FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target);
 	SetActorRotation(FRotator(0,Rotator.Yaw,0));
 }
 
@@ -271,7 +289,10 @@ void ADemoBaseCharacter::CommAttack()
 	if(!bAttacking && !bSustainedAttacking)	{
 		// UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 002"));
 		bAttacking = true;
-		// this->RotateBeforeAttack();
+		if(Cast<ADemoDefaultPlayer>(this))
+		{
+			this->RotateBeforeAttack(GetAttackPointByMouse());
+		}
 		// UE_LOG(LogTemp,Warning,TEXT("ADemoBaseCharacter CommAttack 003"));
 		PlayAnimMontage(CharacterInfo.AttackAnimMontage,CharacterInfo.AttackAnimMontageRate);
 	}

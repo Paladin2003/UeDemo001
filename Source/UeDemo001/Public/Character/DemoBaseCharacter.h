@@ -107,7 +107,19 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InitCharacterInfo();
-	
+
+	/**
+	 * @brief 受到伤害后的处理
+	 * @param Damage 获取的伤害值
+	 */
+	void GetHit(float Damage);
+
+	/**
+	 * @brief 死亡后的处理 
+	 * @param DamageCauserCharacter 
+	 */
+	void CharacterDied(ADemoBaseCharacter* DamageCauserCharacter);
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/**
@@ -197,8 +209,9 @@ protected:
 	
 	/**
 	 * @brief 攻击前转身面对攻击点
+	 * @param Target 目标点
 	 */
-	void RotateBeforeAttack();
+	void RotateBeforeAttack(const FVector& Target);
 
 	/**
 	 * @brief 处理伤害事件
