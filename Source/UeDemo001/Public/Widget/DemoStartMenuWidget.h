@@ -16,21 +16,29 @@ class UEDEMO001_API UDemoStartMenuWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
 	UDemoCommBtnWidget* BtnBegin;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
+	UDemoCommBtnWidget* BtnContinue;
+
+	UPROPERTY(meta=(BindWidget))
 	UDemoCommBtnWidget* BtnSave;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
 	UDemoCommBtnWidget* BtnExit;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSoftObjectPtr<UWorld> GameDefaultLevel;
 
 	virtual void NativeConstruct() override;
 
 private:
 	UFUNCTION()
 	void StartGame();
+
+	UFUNCTION()
+	void ContinueGame();
 
 	UFUNCTION()
 	void ExitGame();

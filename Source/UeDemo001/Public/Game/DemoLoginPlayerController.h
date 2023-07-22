@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Widget/DemoCommBtnWidget.h"
 #include "Widget/DemoStartMenuWidget.h"
 #include "DemoLoginPlayerController.generated.h"
 
@@ -17,6 +16,7 @@ class UEDEMO001_API ADemoLoginPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	ADemoLoginPlayerController();
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UDemoStartMenuWidget> StartMenuWidgetClass;

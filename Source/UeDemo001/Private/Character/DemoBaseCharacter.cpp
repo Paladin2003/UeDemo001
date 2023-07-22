@@ -9,9 +9,11 @@
 #include "Blueprint/UserWidget.h"
 #include "Character/Enemy/DemoDefaultEnemy.h"
 #include "Character/Player/DemoDefaultPlayer.h"
+#include "Data/DemoSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Widget/DamageTipWidget.h"
 #include "kismet/KismetMathLibrary.h"
+#include "Library/DemoStaticLibrary.h"
 #include "Prop/DemoBaseProp.h"
 
 // Sets default values
@@ -102,7 +104,7 @@ void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter
 	//设定死亡
 	this->bIsDie = true;
 
-	//受到伤害停止移动
+	//停止移动
 	GetMovementComponent()->StopActiveMovement();
 
 	//清除奔跑状态
@@ -118,19 +120,34 @@ void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter
 
 	// UE_LOG(LogTemp,Warning,TEXT("开始获取伤害来源。。。。"));
 	// UE_LOG(LogTemp,Warning,TEXT("开始计算%s经验值。。。。"),*FName(DamageCauserCharacter->GetName()).ToString());
+	//计算经验值
 	DamageCauserCharacter->CalculateExp(this->CharacterInfo.DieExp);
-
+	
 	//生成掉落物
-	// GetWorld()->SpawnActor(ADemoBaseProp::StaticClass(),this->GetActorLocation());
-	float RandomDropRate = UKismetMathLibrary::RandomFloatInRange(0,1);
-	UE_LOG(LogTemp,Warning,TEXT("物品掉落率：%f，随机掉落率：%f"),this->CharacterInfo.DropPropRate,RandomDropRate);
-	if(RandomDropRate >= 1.f - this->CharacterInfo.DropPropRate)
+	if (Cast<ADemoDefaultEnemy>(this))
 	{
-		UE_LOG(LogTemp,Warning,TEXT("生成掉落物中。。。"))
-		ADemoBaseProp* DropProp = this->GetWorld()->SpawnActor<ADemoBaseProp>(this->CharacterInfo.DropPropClass,this->GetActorTransform());
+		if(const float RandomDropRate = UKismetMathLibrary::RandomFloatInRange(0,1); RandomDropRate >= 1.f - this->CharacterInfo.DropPropRate)
+		{
+			// UE_LOG(LogTemp,Warning,TEXT("物品掉落率：%f，随机掉落率：%f"),this->CharacterInfo.DropPropRate,RandomDropRate);
+			this->GetWorld()->SpawnActor<ADemoBaseProp>(this->CharacterInfo.DropPropClass,this->GetActorTransform());
+		}
+		//设置延迟销毁
+		DelayDestroy();
 	}
-	//设置延迟销毁
-	DelayDestroy();
+
+	//玩家死亡保存游戏
+	if (Cast<ADemoDefaultPlayer>(this))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("保存玩家%s数据。。。"),*this->CharacterInfo.Name);
+		UDemoSaveGame* SaveGame = NewObject<UDemoSaveGame>();
+		SaveGame->CharacterInfo = this->CharacterInfo;
+		SaveGame->CharacterInfo.State.CurHp = CharacterInfo.State.MaxHp;
+		SaveGame->CharacterInfo.State.CurMp = CharacterInfo.State.MaxMp;
+		SaveGame->GameCostTime += UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld());
+		UDemoStaticLibrary::SaveGame(SaveGame);
+
+		UGameplayStatics::OpenLevel(GetWorld(),"LoginMap");
+	}
 }
 
 float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,

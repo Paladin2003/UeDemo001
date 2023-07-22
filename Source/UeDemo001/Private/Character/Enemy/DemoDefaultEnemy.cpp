@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Character/Player/DemoDefaultPlayer.h"
+#include "Game/DemoGameInstance.h"
 
 ADemoDefaultEnemy::ADemoDefaultEnemy()
 {

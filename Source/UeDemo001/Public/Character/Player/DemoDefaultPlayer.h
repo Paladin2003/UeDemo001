@@ -90,6 +90,8 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	virtual void CommAttack() override;
 
 	UFUNCTION()

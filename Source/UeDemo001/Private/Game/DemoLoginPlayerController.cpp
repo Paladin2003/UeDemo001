@@ -5,6 +5,11 @@
 
 #include "Blueprint/UserWidget.h"
 
+ADemoLoginPlayerController::ADemoLoginPlayerController()
+{
+	bShowMouseCursor = true;
+}
+
 void ADemoLoginPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

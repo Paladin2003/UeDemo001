@@ -6,8 +6,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Data/DemoSaveGame.h"
 #include "Widget/DemoCharacterHudWidget.h"
 #include "Engine/HitResult.h"
+#include "Game/DemoGameInstance.h"
+#include "Library/DemoStaticLibrary.h"
 
 ADemoDefaultPlayer::ADemoDefaultPlayer()
 {
@@ -61,6 +64,19 @@ void ADemoDefaultPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	TimeLine.TickTimeline(DeltaSeconds);
+}
+
+void ADemoDefaultPlayer::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	if (Cast<UDemoGameInstance>(GetWorld()->GetGameInstance())->bIsLoadGame)
+	{
+		if (const UDemoSaveGame* SaveGame = UDemoStaticLibrary::LoadGame())
+		{
+			this->CharacterInfo = SaveGame->CharacterInfo;
+		}
+	}
 }
 
 void ADemoDefaultPlayer::CommAttack()
