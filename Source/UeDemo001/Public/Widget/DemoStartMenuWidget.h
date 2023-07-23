@@ -16,6 +16,10 @@ class UEDEMO001_API UDemoStartMenuWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(meta=(BindWidget))
+	class UWidgetSwitcher* Switcher;
+	
 	UPROPERTY(meta=(BindWidget))
 	UDemoCommBtnWidget* BtnBegin;
 

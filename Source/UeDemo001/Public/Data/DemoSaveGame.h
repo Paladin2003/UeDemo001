@@ -21,4 +21,7 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	double GameCostTime = 0l;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FString ImagePath;
 };

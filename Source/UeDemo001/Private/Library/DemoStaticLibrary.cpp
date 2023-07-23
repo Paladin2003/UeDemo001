@@ -3,6 +3,7 @@
 
 #include "Library/DemoStaticLibrary.h"
 
+#include "AutomationBlueprintFunctionLibrary.h"
 #include "Data/DemoSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -19,4 +20,28 @@ UDemoSaveGame* UDemoStaticLibrary::LoadGame()
 	}
 	UE_LOG(LogTemp,Warning,TEXT("暂无存档。。"));
 	return nullptr;
+}
+
+void UDemoStaticLibrary::JiePing(const UWorld* WorldContextObject)
+{
+	/*bool bExistsScreenCamera = false;
+	TArray<AActor*> OutCameraActors;
+	UGameplayStatics::GetAllActorsOfClass(WorldContextObject,ACameraActor::StaticClass(),OutCameraActors);
+	if(OutCameraActors.Num() > 0)
+	{
+		for(auto Camera : OutCameraActors)
+		{
+			if (Camera->GetName() == "ScreenCamera")
+			{
+				bExistsScreenCamera = true;
+				break;
+			}
+		}
+	}
+
+	if(bExistsScreenCamera)
+	{
+	}*/
+	//UAutomationBlueprintFunctionLibrary::TakeHighResScreenshot(100,100,"AutoSave");
+
 }

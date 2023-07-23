@@ -3,6 +3,7 @@
 
 #include "Character/DemoBaseCharacter.h"
 
+#include "AutomationBlueprintFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
@@ -136,7 +137,7 @@ void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter
 	}
 
 	//玩家死亡保存游戏
-	if (Cast<ADemoDefaultPlayer>(this))
+	if (ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(this))
 	{
 		UE_LOG(LogTemp,Warning,TEXT("保存玩家%s数据。。。"),*this->CharacterInfo.Name);
 		UDemoSaveGame* SaveGame = NewObject<UDemoSaveGame>();
@@ -144,6 +145,9 @@ void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter
 		SaveGame->CharacterInfo.State.CurHp = CharacterInfo.State.MaxHp;
 		SaveGame->CharacterInfo.State.CurMp = CharacterInfo.State.MaxMp;
 		SaveGame->GameCostTime += UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld());
+		//拍照截图
+		UDemoStaticLibrary::JiePing(GetWorld());
+		
 		UDemoStaticLibrary::SaveGame(SaveGame);
 
 		UGameplayStatics::OpenLevel(GetWorld(),"LoginMap");

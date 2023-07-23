@@ -26,4 +26,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable,Category="DemoStaticLibrary")
 	static class UDemoSaveGame* LoadGame();
+
+	static void JiePing(const UWorld* WorldContextObject);
 };

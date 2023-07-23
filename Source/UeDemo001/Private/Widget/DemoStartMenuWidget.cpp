@@ -3,6 +3,7 @@
 
 #include "Widget/DemoStartMenuWidget.h"
 
+#include "Components/WidgetSwitcher.h"
 #include "Game/DemoGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -25,11 +26,12 @@ void UDemoStartMenuWidget::StartGame()
 
 void UDemoStartMenuWidget::ContinueGame()
 {
-	if (UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
+	Switcher->SetActiveWidgetIndex(1);
+	/*if (UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
 	{
 		GameInstance->bIsLoadGame = true;
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(),GameDefaultLevel);
-	}
+	}*/
 }
 
 void UDemoStartMenuWidget::ExitGame()

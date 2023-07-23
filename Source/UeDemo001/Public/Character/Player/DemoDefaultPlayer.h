@@ -20,6 +20,10 @@ class UEDEMO001_API ADemoDefaultPlayer : public ADemoBaseCharacter
 	GENERATED_BODY()
 
 	ADemoDefaultPlayer();
+public:
+		
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	class UCameraComponent* Camera;
 
 protected:
 	
@@ -27,9 +31,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	class USpringArmComponent* CameraArm;
-	
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	class UCameraComponent* Camera;
 
 	/**
 	 * @brief 持续攻击时天暗的过渡曲线
