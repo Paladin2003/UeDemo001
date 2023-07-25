@@ -27,11 +27,13 @@ void UDemoStartMenuWidget::StartGame()
 void UDemoStartMenuWidget::ContinueGame()
 {
 	Switcher->SetActiveWidgetIndex(1);
-	/*if (UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
+	if (UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
 	{
-		GameInstance->bIsLoadGame = true;
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(),GameDefaultLevel);
-	}*/
+		// GameInstance->bIsLoadGame = true;
+		// UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(),GameDefaultLevel);
+	}
+
+	
 }
 
 void UDemoStartMenuWidget::ExitGame()

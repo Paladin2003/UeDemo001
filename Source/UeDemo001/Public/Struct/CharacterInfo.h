@@ -67,7 +67,7 @@ public:
 	 * @brief 道具掉落率
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere,meta=(ClampMin = 0.f,UIMin = 0.f,ClampMax = 1.f,UIMax = 1.f))
-	float DropPropRate;
+	float DropPropRate = 0.2f;
 
 	/**
 	 * @brief 发射物类型

@@ -70,11 +70,14 @@ void ADemoDefaultPlayer::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	if (Cast<UDemoGameInstance>(GetWorld()->GetGameInstance())->bIsLoadGame)
+	if (const UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
 	{
-		if (const UDemoSaveGame* SaveGame = UDemoStaticLibrary::LoadGame())
+		if(GameInstance -> bIsLoadGame)
 		{
-			this->CharacterInfo = SaveGame->CharacterInfo;
+			/*if (const UDemoSaveGame* SaveGame = UDemoStaticLibrary::LoadGame())
+			{
+				this->CharacterInfo = SaveGame;
+			}*/	
 		}
 	}
 }

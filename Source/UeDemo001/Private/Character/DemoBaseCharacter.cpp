@@ -14,6 +14,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Widget/DamageTipWidget.h"
 #include "kismet/KismetMathLibrary.h"
+#include "Library/CaptureScreenHelper.h"
 #include "Library/DemoStaticLibrary.h"
 #include "Prop/DemoBaseProp.h"
 
@@ -139,16 +140,9 @@ void ADemoBaseCharacter::CharacterDied(ADemoBaseCharacter* DamageCauserCharacter
 	//玩家死亡保存游戏
 	if (ADemoDefaultPlayer* DefaultPlayer = Cast<ADemoDefaultPlayer>(this))
 	{
-		UE_LOG(LogTemp,Warning,TEXT("保存玩家%s数据。。。"),*this->CharacterInfo.Name);
-		UDemoSaveGame* SaveGame = NewObject<UDemoSaveGame>();
-		SaveGame->CharacterInfo = this->CharacterInfo;
-		SaveGame->CharacterInfo.State.CurHp = CharacterInfo.State.MaxHp;
-		SaveGame->CharacterInfo.State.CurMp = CharacterInfo.State.MaxMp;
-		SaveGame->GameCostTime += UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld());
-		//拍照截图
-		UDemoStaticLibrary::JiePing(GetWorld());
 		
-		UDemoStaticLibrary::SaveGame(SaveGame);
+		UE_LOG(LogTemp,Warning,TEXT("保存玩家%s数据。。。"),*this->CharacterInfo.Name);
+		UDemoSaveGame::AddNewSave(this,this->CharacterInfo,TEXT("自动保存"));
 
 		UGameplayStatics::OpenLevel(GetWorld(),"LoginMap");
 	}

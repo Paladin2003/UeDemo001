@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "Struct/CharacterInfo.h"
+#include "Struct/GameSaveInfo.h"
 #include "DemoSaveGame.generated.h"
 
 /**
@@ -16,12 +17,12 @@ class UEDEMO001_API UDemoSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FCharacterInfo CharacterInfo;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	double GameCostTime = 0l;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	TArray<FGameSaveInfo> GameSaveInfos = {};
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FString ImagePath;
+	UFUNCTION(BlueprintCallable,meta=(WorldContext = "WorldContextObject"))
+	static void AddNewSave(UObject* WorldContextObject,FCharacterInfo InCharacterInfo,FString InSaveName);
+
+	TArray<FGameSaveInfo> GetAllGameSaved();
 };

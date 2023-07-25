@@ -45,7 +45,32 @@ public:
 	 */
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* SaveTotalTimeTextBlock;
+
+	FString SaveImagePath;
 	
+	FString SaveSlotName;
+
+	int32 SaveLevel;
+
+	FString SaveDate;
+
+	int32 SaveTotalTime;
 
 	virtual void NativeConstruct() override;
+
+	virtual void NativeOnInitialized() override;
+
+private :
+
+	UFUNCTION()
+	FText GetSlotName();
+
+	UFUNCTION()
+	FText GetLevel();
+
+	UFUNCTION()
+	FText GetSaveDate();
+
+	UFUNCTION()
+	FText GetTotalTime();
 };

@@ -15,7 +15,9 @@ public class UeDemo001 : ModuleRules
 			"AIModule","AISupportModule",
 			"GameplayTasks",
 			"NavigationSystem",
-			"Niagara","NiagaraCore"
+			"Niagara","NiagaraCore",
+			"ImageWrapper",
+			"Json","JsonUtilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

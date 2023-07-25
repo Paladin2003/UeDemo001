@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DemoCommBtnWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "SaveGameListWidget.h"
 #include "DemoStartMenuWidget.generated.h"
 
 /**
@@ -31,6 +32,9 @@ public:
 
 	UPROPERTY(meta=(BindWidget))
 	UDemoCommBtnWidget* BtnExit;
+
+	UPROPERTY(meta=(BindWidget))
+	USaveGameListWidget* GameSaveList;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSoftObjectPtr<UWorld> GameDefaultLevel;
