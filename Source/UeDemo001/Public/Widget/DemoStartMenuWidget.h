@@ -36,6 +36,9 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	USaveGameListWidget* GameSaveList;
 
+	UPROPERTY(meta=(BindWidget))
+	UButton* GameSaveListBack;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSoftObjectPtr<UWorld> GameDefaultLevel;
 
@@ -53,4 +56,7 @@ private:
 
 	UFUNCTION()
 	void SaveGame();
+
+	UFUNCTION()
+	void BackMenu();
 };

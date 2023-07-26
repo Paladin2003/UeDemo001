@@ -22,13 +22,7 @@ void USaveGameListWidget::NativeConstruct()
 			{
 				UE_LOG(LogTemp,Warning,TEXT("读取中。。。"));
 				USaveGameItemWidget* SaveItem = CreateWidget<USaveGameItemWidget>(this,SaveGameItemWidget);
-				
-				SaveItem->SaveSlotName = SaveInfo.SaveName;
-				SaveItem->SaveImagePath = SaveInfo.ImagePath;
-				SaveItem->SaveDate = SaveInfo.SaveDate;
-				SaveItem->SaveLevel = SaveInfo.CharacterInfo.Level;
-				SaveItem->SaveTotalTime = SaveInfo.TotalCostTime;
-				
+				SaveItem->InitGameSaveInfo(SaveInfo);
 				this->Container->AddChildToVerticalBox(SaveItem);
 			}
 		}

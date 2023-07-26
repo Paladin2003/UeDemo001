@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Struct/GameSaveInfo.h"
 #include "DemoGameInstance.generated.h"
 
 /**
@@ -16,7 +17,9 @@ class UEDEMO001_API UDemoGameInstance : public UGameInstance
 
 public:
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	bool bIsLoadGame;
-	
+	UPROPERTY()
+	bool bIsLoad;
+
+	UPROPERTY()
+	FGameSaveInfo LoadGameInfo;
 };

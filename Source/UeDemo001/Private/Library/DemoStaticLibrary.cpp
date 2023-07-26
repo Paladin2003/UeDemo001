@@ -17,6 +17,6 @@ UDemoSaveGame* UDemoStaticLibrary::LoadGame()
 	{
 		return Cast<UDemoSaveGame>(UGameplayStatics::LoadGameFromSlot("DefaultSave",0));
 	}
-	// UE_LOG(LogTemp,Warning,TEXT("暂无存档。。"));
+	UE_LOG(LogTemp,Warning,TEXT("暂无存档。。"));
 	return nullptr;
 }

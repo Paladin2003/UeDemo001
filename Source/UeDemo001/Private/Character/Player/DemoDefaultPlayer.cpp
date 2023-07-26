@@ -72,12 +72,12 @@ void ADemoDefaultPlayer::OnConstruction(const FTransform& Transform)
 
 	if (const UDemoGameInstance* GameInstance = Cast<UDemoGameInstance>(GetWorld()->GetGameInstance()))
 	{
-		if(GameInstance -> bIsLoadGame)
+		if(GameInstance -> bIsLoad)
 		{
-			/*if (const UDemoSaveGame* SaveGame = UDemoStaticLibrary::LoadGame())
-			{
-				this->CharacterInfo = SaveGame;
-			}*/	
+			this->CharacterInfo = GameInstance->LoadGameInfo.CharacterInfo;
+
+			//因为死亡导致的自动存档，重新加载游戏时，恢复恢复20% 血量
+			this->CharacterInfo.State.CurHp = this->CharacterInfo.State.MaxHp / 5;
 		}
 	}
 }

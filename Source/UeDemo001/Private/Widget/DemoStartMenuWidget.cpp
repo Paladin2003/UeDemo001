@@ -3,6 +3,7 @@
 
 #include "Widget/DemoStartMenuWidget.h"
 
+#include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Game/DemoGameInstance.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,6 +17,15 @@ void UDemoStartMenuWidget::NativeConstruct()
 	BtnContinue->Button->OnReleased.AddDynamic(this,&UDemoStartMenuWidget::ContinueGame);
 	BtnSave->Button->OnReleased.AddDynamic(this,&UDemoStartMenuWidget::SaveGame);
 	BtnExit->Button->OnReleased.AddDynamic(this,&UDemoStartMenuWidget::ExitGame);
+	GameSaveListBack->OnReleased.AddDynamic(this,&UDemoStartMenuWidget::BackMenu);
+	
+	if (!GameSaveList->Container->HasAnyChildren())
+	{
+		GameSaveList->SetIsEnabled(false);
+	}else
+	{
+		GameSaveList->SetIsEnabled(true);
+	}
 }
 
 void UDemoStartMenuWidget::StartGame()
@@ -44,4 +54,9 @@ void UDemoStartMenuWidget::ExitGame()
 void UDemoStartMenuWidget::SaveGame()
 {
 	UE_LOG(LogTemp,Warning,TEXT("保存游戏。。。。"));
+}
+
+void UDemoStartMenuWidget::BackMenu()
+{
+	Switcher->SetActiveWidgetIndex(0);
 }
