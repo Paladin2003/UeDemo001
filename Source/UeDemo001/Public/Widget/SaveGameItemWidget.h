@@ -16,11 +16,18 @@ class UEDEMO001_API USaveGameItemWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
 	/**
-	 * @brief 点击按钮
+	 * @brief 记录加载按钮
 	 */
 	UPROPERTY(meta=(BindWidget))
-	class UButton* SaveBtn;
+	class UButton* LoadBtn;
+
+	/**
+	 * @brief 记录删除按钮
+	 */
+	UPROPERTY(meta=(BindWidget))
+	class UButton* DeleteBtn;
 	
 	/**
 	 * @brief 记录图片
@@ -65,6 +72,9 @@ private :
 
 	UFUNCTION()
 	void LoadGame();
+
+	UFUNCTION()
+	void DeleteGame();
 	
 	UFUNCTION()
 	FText GetSlotName();

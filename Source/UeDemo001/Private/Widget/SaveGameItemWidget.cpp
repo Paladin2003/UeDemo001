@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Game/DemoGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "Library/DemoStaticLibrary.h"
 
 void USaveGameItemWidget::NativeConstruct()
 {
@@ -21,7 +22,8 @@ void USaveGameItemWidget::NativeOnInitialized()
 	SaveLevelTextBlock->TextDelegate.BindUFunction(this,"GetLevel");
 	SaveDateTextBlock->TextDelegate.BindUFunction(this,"GetSaveDate");
 	SaveTotalTimeTextBlock->TextDelegate.BindUFunction(this,"GetTotalTime");
-	SaveBtn->OnReleased.AddDynamic(this,&USaveGameItemWidget::LoadGame);
+	LoadBtn->OnReleased.AddDynamic(this,&USaveGameItemWidget::LoadGame);
+	DeleteBtn->OnReleased.AddDynamic(this,&USaveGameItemWidget::DeleteGame);
 }
 
 void USaveGameItemWidget::InitGameSaveInfo(FGameSaveInfo InGameSaveInfo)
@@ -40,7 +42,12 @@ void USaveGameItemWidget::LoadGame()
 
 		UGameplayStatics::OpenLevel(GetWorld(),TEXT("DefaultMap"));
 	}
-	
+}
+
+void USaveGameItemWidget::DeleteGame()
+{
+	UDemoStaticLibrary::DeleteGame(this->GameSaveInfo.SaveName);
+	this->RemoveFromParent();
 }
 
 FText USaveGameItemWidget::GetSlotName()

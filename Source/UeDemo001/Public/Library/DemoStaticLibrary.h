@@ -26,4 +26,11 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable,Category="DemoStaticLibrary")
 	static class UDemoSaveGame* LoadGame();
+
+	
+	/**
+	 * @brief 删除游戏
+	 */
+	UFUNCTION(BlueprintCallable,Category="DemoStaticLibrary")
+	static void DeleteGame(const FString InSaveName);
 };

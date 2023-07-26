@@ -20,3 +20,21 @@ UDemoSaveGame* UDemoStaticLibrary::LoadGame()
 	UE_LOG(LogTemp,Warning,TEXT("暂无存档。。"));
 	return nullptr;
 }
+
+void UDemoStaticLibrary::DeleteGame(const FString InSaveName)
+{
+	if (UDemoSaveGame* DemoSaveGame = LoadGame())
+	{
+		TArray<FGameSaveInfo> SaveInfos = DemoSaveGame->GameSaveInfos;
+		for (int32 SaveIndex = 0; SaveIndex < SaveInfos.Num(); ++SaveIndex)
+		{
+			if(SaveInfos[SaveIndex].SaveName == InSaveName)
+			{
+				SaveInfos.RemoveAt(SaveIndex);
+				break;
+			}
+		}
+		DemoSaveGame->GameSaveInfos = SaveInfos;
+		SaveGame(DemoSaveGame);
+	}
+}
