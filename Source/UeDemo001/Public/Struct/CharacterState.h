@@ -56,10 +56,17 @@ public:
 	float AttackRange = 1.f;
 
 	/**
-	 * @brief 行走速度
+	 * @brief 行走速度（最终行走速度为 行走速度* 行走速率）
 	 */
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(UIMin = 100))
 	float WalkSpeed = 500.f;
+
+
+	/**
+	 * @brief 行走速率（最终行走速度为 行走速度* 行走速率）
+	 */
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(UIMin = 0,UIMax = 1,ClampMin = 0,ClampMax = 1))
+	float WalkSpeedRate = 1.f;
 
 	FCharacterState& operator+=(const FCharacterState& InState);
 };

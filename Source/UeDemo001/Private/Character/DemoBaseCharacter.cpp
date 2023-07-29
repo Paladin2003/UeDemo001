@@ -3,7 +3,6 @@
 
 #include "Character/DemoBaseCharacter.h"
 
-#include "AutomationBlueprintFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Missile/DemoBaseMissle.h"
@@ -52,13 +51,15 @@ void ADemoBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(RecoverMpTimerHandle,this,&ADemoBaseCharacter::AutoRecoverMp,CharacterInfo.State.MpAutoRecoverRate,true);
-
 	FOnTimelineFloatStatic OnDashTimeLineTick;
 	FOnTimelineEventStatic OnDashTimeLineFinished;
-
 	OnDashTimeLineTick.BindUFunction(this,TEXT("OnDashTick"));
 	OnDashTimeLineFinished.BindUFunction(this,TEXT("OnDashFinished"));
-
+	/*TArray<FRichCurveEditInfoTemplate<FRealCurve*>> RichCurveEditInfos = DashCurve->GetCurves();
+	UE_LOG(LogTemp,Warning,TEXT("DashCurve 获取到编辑点：%d个"),RichCurveEditInfos.Num());*/
+	/*MovementCurve = NewObject<UDemoCurveFloat>();
+	MovementCurve->SetCurveKey(0,0.1);
+	MovementCurve->SetCurveKey(3.5,1);*/
 	DashTimeLine.AddInterpFloat(DashCurve,OnDashTimeLineTick);
 	DashTimeLine.SetTimelineFinishedFunc(OnDashTimeLineFinished);
 	DashTimeLine.SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
@@ -165,11 +166,7 @@ float ADemoBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		//旋转对其玩家
 		RotateBeforeAttack(DamageCauserCharacter->GetActorLocation());
-		//敌方被击中后短暂冲刺
-        TriggerTimeDash(0,0);	
 	}
-	
-
 
 	float Damage = 0.f;
 	//计算伤害
@@ -195,20 +192,26 @@ void ADemoBaseCharacter::TriggerTimeDash(const float DurationTime, const float D
 {
 	if(DashCurve)
 	{
-		DashTimeLine.Play();
+		CharacterInfo.State.WalkSpeedRate = DashRate;
+		DashTimeLine.PlayFromStart();	
 	}
 }
 
 void ADemoBaseCharacter::OnDashTick()
 {
-	float DushRate = DashCurve->GetFloatValue(DashTimeLine.GetPlaybackPosition());
-	// UE_LOG(LogTemp,Warning,TEXT("获取到冲刺的倍率：%f"),DushRate);
-	SetCharacterMaxWalkSpeed(CharacterInfo.State.WalkSpeed * DushRate);
+	if(DashCurve)
+	{
+		float DushRate = DashCurve->GetFloatValue(DashTimeLine.GetPlaybackPosition());
+		DushRate = UKismetMathLibrary::Lerp(1.f,CharacterInfo.State.WalkSpeedRate,DushRate);
+		UE_LOG(LogTemp,Warning,TEXT("获取到冲刺的倍率：%f"),DushRate);
+		SetCharacterMaxWalkSpeed(CharacterInfo.State.WalkSpeed * DushRate);
+	}
 }
 
 void ADemoBaseCharacter::OnDashFinished()
 {
 	// UE_LOG(LogTemp,Warning,TEXT("加速冲刺完成。。。"));
+	CharacterInfo.State.WalkSpeedRate = 1.f;
 }
 
 void ADemoBaseCharacter::ExecuteDelayDestroy()

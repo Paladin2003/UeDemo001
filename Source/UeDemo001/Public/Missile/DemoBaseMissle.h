@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/DemoBaseCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -25,8 +26,25 @@ public:
 
 protected:
 
+	FTimerHandle FireTimerHandle;
+
+	ADemoBaseCharacter* DamagedCharacter;
+
+	/**
+	 * @brief 伤害值
+	 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Damage")
 	int32 Damage = 3;
+	/**
+	 * @brief 异常状态伤害值
+	 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Damage")
+	int32 DebuffDamage = 1;
+	/**
+	 * @brief 异常状态时间
+	 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Damage")
+	float DebuffTime = 1.f;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USphereComponent* Sphere;
@@ -42,7 +60,17 @@ protected:
 	UFUNCTION()
 	void BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	bool bOverlapped = false;
+	/**
+	 * @brief 发射物的效果结算
+	 * @param InCharacter 
+	 */
+	virtual void MissileEffect(ADemoBaseCharacter* InCharacter);
+
+	/**
+	 * @brief 效果影响的回调
+	 */
+	UFUNCTION()
+	virtual void EffectInvoke();
 	
 public:
 
@@ -53,4 +81,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Destroyed() override;
+
+private:
+	bool bOverlapped = false;
 };

@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Widget/DamageTipWidget.h"
 #include "Components/TimelineComponent.h"
+#include "Curves/DemoCurveFloat.h"
 #include "Struct/CharacterInfo.h"
 #include "DemoBaseCharacter.generated.h"
 
@@ -84,6 +85,14 @@ public:
 	FCharacterInfo GetCharacterInfo();
 
 	void AddState(const FCharacterState& InState);
+
+	/**
+	 * @brief 加速冲刺
+	 * @param DurationTime 加速时长 
+	 * @param DashRate 加速倍率
+	 */
+	virtual void TriggerTimeDash(const float DurationTime,const float DashRate = 2.0f);
+	
 protected:
 	/**
 	 * @brief 延迟销毁的计时器
@@ -147,6 +156,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Init|param")
 	UCurveFloat* DashCurve;
 
+	UDemoCurveFloat* MovementCurve;
+
 	/**
 	 * @brief 伤害显示UI
 	 */
@@ -184,7 +195,7 @@ protected:
 	UStaticMeshComponent* Weapon;
 	
 	/**
-	 * @brief 延时销毁
+	 * @brief 自动回蓝
 	 */
 	UFUNCTION()
 	void AutoRecoverMp();
@@ -223,14 +234,6 @@ protected:
 	 */
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	                         AActor* DamageCauser) override;
-
-
-	/**
-	 * @brief 加速冲刺
-	 * @param DurationTime 加速时长 
-	 * @param DashRate 加速倍率
-	 */
-	virtual void TriggerTimeDash(const float DurationTime,const float DashRate = 2.0f);
 
 	UFUNCTION()
 	void OnDashTick();

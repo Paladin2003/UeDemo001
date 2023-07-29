@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DemoStaticLibrary.generated.h"
 

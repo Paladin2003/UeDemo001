@@ -72,6 +72,7 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 			UGameplayStatics::ApplyDamage(DemoBaseCharacter, Damage,
 				DemoBaseCharacter->GetController(),
 				this->GetOwner(), nullptr);
+
 		}
 		//创建爆炸特效
 		UGameplayStatics::SpawnEmitterAtLocation(this, BoomParticle, this->GetActorLocation());
@@ -98,10 +99,33 @@ void ADemoBaseMissle::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 					UGameplayStatics::ApplyDamage(BaseCharacter,
 						UKismetMathLibrary::RandomFloatInRange(1.f,Damage),
 						BaseCharacter->GetController(), this->GetOwner(), nullptr);
+					MissileEffect(BaseCharacter);
 				}
 			}
 		}
-		this->Destroy();
+		// this->Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// this->Mesh->SetVisibility(false);
+		// this->Particle->SetVisibility(false);
+		
+		// this->Destroy();
+	}
+}
+
+void ADemoBaseMissle::MissileEffect(ADemoBaseCharacter* InCharacter)
+{
+	UE_LOG(LogTemp,Warning,TEXT("触发特殊效果。。。"));
+	DamagedCharacter = InCharacter;
+	this->SetLifeSpan(this->GetLifeSpan() >= DebuffTime ? this->GetLifeSpan() : DebuffTime );
+	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle,this,&ADemoBaseMissle::EffectInvoke,1.f,true);
+}
+
+void ADemoBaseMissle::EffectInvoke()
+{
+	if(DamagedCharacter)
+	{
+		UGameplayStatics::ApplyDamage(DamagedCharacter, DebuffDamage,
+				DamagedCharacter->GetController(),
+				this->GetOwner(),nullptr);
 	}
 }
 
@@ -113,5 +137,7 @@ void ADemoBaseMissle::Tick(float DeltaTime)
 
 void ADemoBaseMissle::Destroyed()
 {
+	UE_LOG(LogTemp,Warning,TEXT("开始执行销毁。。"));
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 	Super::Destroyed();
 }
