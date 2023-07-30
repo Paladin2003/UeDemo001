@@ -116,3 +116,17 @@ Unreal Demo001
 
    		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
       	
+三、参数构造
+
+ 	1.产生开始
+
+		UGameplayStatics::BeginDeferredActorSpawnFromclass()
+
+	2.调用自定义初始化函数
+ 
+		init（XXX，XXX）
+
+	3.结束产生
+ 
+		UGameplayStatics:;FinishSpawnActor(Instance,...)
+   
